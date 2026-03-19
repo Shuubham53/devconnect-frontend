@@ -8,14 +8,9 @@ import PostDetailPage from './pages/PostDetailPage'
 import ProfilePage from './pages/ProfilePage'
 import NotificationsPage from './pages/NotificationsPage'
 import LeaderboardPage from './pages/LeaderboardPage'
-
-
-
-
-
-
-
-
+import SearchPage from './pages/SearchPage'
+import ExplorePage from './pages/ExplorePage'
+import EditProfilePage from './pages/EditProfilePage'
 
 
 
@@ -44,6 +39,11 @@ function App() {
       <Route path="/profile/:username" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
       <Route path="/notifications" element={user ? <NotificationsPage /> : <Navigate to="/login" />} />
       <Route path="/leaderboard" element={user ? <LeaderboardPage /> : <Navigate to="/login" />} />  
+      <Route path="/search" element={user ? <SearchPage /> : <Navigate to="/login" />} />
+      <Route path="/explore" element={user ? <ExplorePage /> : <Navigate to="/login" />} />
+      <Route path="/settings" element={user ? <EditProfilePage /> : <Navigate to="/login" />} />
+
+
     </Routes>
   )
 }

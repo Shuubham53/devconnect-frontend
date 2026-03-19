@@ -73,7 +73,7 @@ export default function NotificationsPage() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: '680px' }}>
+      <div style={{ maxWidth: '72%' }}>
 
         {/* Header */}
         <div style={{

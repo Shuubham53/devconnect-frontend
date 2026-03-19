@@ -140,7 +140,7 @@ export default function PostDetailPage() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: '720px' }}>
+      <div style={{ maxWidth: '85%' }}>
 
         {/* Back button */}
         <button onClick={() => navigate('/feed')} style={{

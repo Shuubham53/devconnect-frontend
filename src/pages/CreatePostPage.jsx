@@ -87,7 +87,7 @@ export default function CreatePostPage() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: '680px' }}>
+      <div style={{ maxWidth: '70%' }}>
 
         {/* Header */}
         <div style={{ marginBottom: '24px' }}>

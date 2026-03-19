@@ -142,25 +142,26 @@ export default function ProfilePage() {
         <ArrowLeft size={15} /> Back
       </button>
 
-      {/* TOP ROW — Profile card + Score History side by side */}
+      {/* TOP ROW */}
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', marginBottom: '16px' }}>
 
         {/* Profile Card */}
         <div style={{
           flex: 1, minWidth: 0,
           background: '#0d0d18', border: '1px solid #1e293b',
-          borderRadius: '16px', overflow: 'hidden'
+          borderRadius: '16px', overflow: 'visible'
         }}>
-          {/* Banner — gradient theme, avatar shows through */}
+          {/* Banner — NO overflow hidden so avatar can overflow */}
           <div style={{
-            height: '110px', position: 'relative', overflow: 'visible',
-            background: 'linear-gradient(135deg, #1931465c 0%, #060810 40%, #16634821 70%, #0d391d66 100%)'
+            height: '110px', position: 'relative',
+            overflow: 'hidden', borderRadius: '16px 16px 0 0',
+            background: '#060608'
           }}>
             {/* Orbs */}
             <div style={{
               position: 'absolute', top: '-50px', left: '-30px',
               width: '200px', height: '200px', borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(6, 30, 67, 0.59) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(0,255,135,0.18) 0%, transparent 70%)',
               filter: 'blur(35px)', pointerEvents: 'none'
             }} />
             <div style={{
@@ -175,72 +176,81 @@ export default function ProfilePage() {
               background: 'radial-gradient(circle, rgba(192,132,252,0.12) 0%, transparent 70%)',
               filter: 'blur(30px)', pointerEvents: 'none'
             }} />
-
-            {/* Avatar — overlapping banner */}
-            <div style={{
-              position: 'absolute', bottom: '-36px', left: '24px',
-              width: '72px', height: '72px', borderRadius: '50%',
-              background: 'linear-gradient(135deg, rgba(103, 221, 164, 0.09), rgba(53, 148, 62, 0.23))',
-              border: '3px solid #0d0d18',
-              outline: '1px solid rgba(0, 255, 136, 0.2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '24px', fontWeight: '800', color: '#00ff87',
-              zIndex: 10, boxShadow: '0 0 20px rgba(0, 255, 136, 0.03)'
-            }}>
-              {getInitials(profile.name)}
-            </div>
           </div>
 
-          <div style={{ padding: '44px 20px 20px' }}>
-            {/* Name row */}
+          {/* Avatar row — OUTSIDE banner, overlapping it with negative margin */}
+          <div style={{ padding: '0 24px' }}>
             <div style={{
-              display: 'flex', alignItems: 'flex-start',
-              justifyContent: 'space-between', marginBottom: '10px'
+              display: 'flex', alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              marginTop: '-42px', marginBottom: '16px'
             }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '3px' }}>
-                  <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#f1f5f9', margin: 0, letterSpacing: '-0.5px' }}>
-                    {profile.name}
-                  </h1>
-                  <span style={{
-                    fontSize: '10px', padding: '2px 8px', borderRadius: '20px', fontWeight: '600',
-                    background: badgeConfig.bg, color: badgeConfig.color, border: `1px solid ${badgeConfig.border}`
-                  }}>
-                    {badgeConfig.emoji} {profile.badge}
-                  </span>
-                </div>
-                <div style={{ fontSize: '13px', color: '#475569' }}>@{profile.username}</div>
+              {/* Avatar */}
+              <div style={{
+                width: '84px', height: '84px', borderRadius: '50%',
+                background: 'linear-gradient(135deg, rgba(0,255,135,0.2), rgba(0,255,135,0.05))',
+                border: '4px solid #0d0d18',
+                outline: '1px solid rgba(0,255,135,0.25)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '28px', fontWeight: '800', color: '#00ff87',
+                flexShrink: 0, zIndex: 10, overflow: 'hidden',
+                position: 'relative'
+              }}>
+                {profile.avatarUrl ? (
+                  <img src={profile.avatarUrl} alt="avatar"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : getInitials(profile.name)}
               </div>
 
-              {isOwnProfile ? (
-                <button onClick={() => navigate('/settings')} style={{
-                  display: 'flex', alignItems: 'center', gap: '5px',
-                  padding: '7px 13px', borderRadius: '8px',
-                  background: 'transparent', border: '1px solid #1e293b',
-                  color: '#94a3b8', fontSize: '12px', cursor: 'pointer',
-                  fontFamily: 'Inter, sans-serif', flexShrink: 0
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.color = '#e2e8f0' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e293b'; e.currentTarget.style.color = '#94a3b8' }}
-                >
-                  <Edit size={12} /> Edit
-                </button>
-              ) : (
-                <button onClick={handleFollow} style={{
-                  padding: '7px 18px', borderRadius: '8px', flexShrink: 0,
-                  background: following ? 'transparent' : '#00ff87',
-                  border: following ? '1px solid #1e293b' : 'none',
-                  color: following ? '#94a3b8' : '#000',
-                  fontSize: '12px', fontWeight: '700',
-                  cursor: 'pointer', fontFamily: 'Inter, sans-serif'
+              {/* Edit / Follow */}
+              <div style={{ paddingBottom: '4px' }}>
+                {isOwnProfile ? (
+                  <button onClick={() => navigate('/settings')} style={{
+                    display: 'flex', alignItems: 'center', gap: '5px',
+                    padding: '7px 13px', borderRadius: '8px',
+                    background: 'transparent', border: '1px solid #1e293b',
+                    color: '#94a3b8', fontSize: '12px', cursor: 'pointer',
+                    fontFamily: 'Inter, sans-serif'
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.color = '#e2e8f0' }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e293b'; e.currentTarget.style.color = '#94a3b8' }}
+                  >
+                    <Edit size={12} /> Edit
+                  </button>
+                ) : (
+                  <button onClick={handleFollow} style={{
+                    padding: '7px 18px', borderRadius: '8px',
+                    background: following ? 'transparent' : '#00ff87',
+                    border: following ? '1px solid #1e293b' : 'none',
+                    color: following ? '#94a3b8' : '#000',
+                    fontSize: '12px', fontWeight: '700',
+                    cursor: 'pointer', fontFamily: 'Inter, sans-serif'
+                  }}>
+                    {following ? 'Following ✓' : '+ Follow'}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Name + Badge */}
+            <div style={{ marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '3px' }}>
+                <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#f1f5f9', margin: 0, letterSpacing: '-0.5px' }}>
+                  {profile.name}
+                </h1>
+                <span style={{
+                  fontSize: '10px', padding: '2px 8px', borderRadius: '20px', fontWeight: '600',
+                  background: badgeConfig.bg, color: badgeConfig.color, border: `1px solid ${badgeConfig.border}`
                 }}>
-                  {following ? 'Following ✓' : '+ Follow'}
-                </button>
-              )}
+                  {badgeConfig.emoji} {profile.badge}
+                </span>
+              </div>
+              <div style={{ fontSize: '13px', color: '#475569' }}>@{profile.username}</div>
             </div>
 
             {profile.bio && (
-              <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6', marginBottom: '12px', marginTop: '8px' }}>
+              <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6', marginBottom: '12px' }}>
                 {profile.bio}
               </p>
             )}
@@ -291,17 +301,18 @@ export default function ProfilePage() {
             <div style={{
               display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
               gap: '1px', background: '#1e293b', borderRadius: '10px',
-              overflow: 'hidden', border: '1px solid #1e293b'
+              overflow: 'hidden', border: '1px solid #1e293b',
+              marginBottom: '20px'
             }}>
               {[
-                { label: 'Score', value: profile.score, color: '#00ff88ed', highlight: true },
+                { label: 'Score', value: profile.score, color: '#00ff87', highlight: true },
                 { label: 'Posts', value: posts.length, color: '#e2e8f0' },
                 { label: 'Followers', value: profile.followersCount, color: '#e2e8f0' },
                 { label: 'Following', value: profile.followingCount, color: '#e2e8f0' },
               ].map(stat => (
                 <div key={stat.label} style={{
                   textAlign: 'center', padding: '12px 8px',
-                  background: stat.highlight ? 'rgba(0, 255, 136, 0)' : '#0d0d18'
+                  background: stat.highlight ? 'rgba(0,255,135,0.06)' : '#0d0d18'
                 }}>
                   <div style={{ fontSize: '20px', fontWeight: '700', color: stat.color, letterSpacing: '-0.5px', lineHeight: 1 }}>
                     {stat.value}
@@ -313,14 +324,13 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Score History — fills remaining width */}
+        {/* Score History */}
         {isOwnProfile && (
           <div style={{
             width: '280px', flexShrink: 0,
             background: '#0d0d18', border: '1px solid #1e293b',
             borderRadius: '16px', overflow: 'hidden'
           }}>
-            {/* Header */}
             <div style={{
               padding: '14px 16px', borderBottom: '1px solid #1e293b',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between'
@@ -332,12 +342,9 @@ export default function ProfilePage() {
               <span style={{ fontSize: '10px', color: '#475569' }}>{scoreHistory.length} events</span>
             </div>
 
-            {/* Total */}
             <div style={{
-              margin: '10px 10px 0',
-              padding: '12px 14px',
-              background: 'rgba(0,255,135,0.06)',
-              borderRadius: '10px',
+              margin: '10px 10px 0', padding: '12px 14px',
+              background: 'rgba(0,255,135,0.06)', borderRadius: '10px',
               border: '1px solid rgba(0,255,135,0.15)',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between'
             }}>
@@ -355,7 +362,6 @@ export default function ProfilePage() {
               </span>
             </div>
 
-            {/* List */}
             <div style={{ padding: '10px', maxHeight: '280px', overflowY: 'auto' }}>
               {scoreHistory.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '24px 0', color: '#475569', fontSize: '12px' }}>
@@ -401,152 +407,117 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* BOTTOM ROW — Posts full width */}
-<div style={{ background: '#0d0d18', border: '1px solid #1e293b', borderRadius: '12px', overflow: 'hidden' }}>
-  <div style={{ padding: '14px 20px', borderBottom: '1px solid #1e293b', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-    <h2 style={{ fontSize: '14px', fontWeight: '600', color: '#f1f5f9', margin: 0 }}>
-      Posts <span style={{ marginLeft: '6px', fontSize: '12px', color: '#475569', fontWeight: '400' }}>{posts.length}</span>
-    </h2>
-    {isOwnProfile && (
-      <button onClick={() => navigate('/create-post')} style={{
-        padding: '6px 14px', borderRadius: '7px', border: 'none',
-        background: '#00ff87', color: '#000', fontSize: '12px',
-        fontWeight: '700', cursor: 'pointer', fontFamily: 'Inter, sans-serif'
-      }}>
-        + New Post
-      </button>
-    )}
-  </div>
-  <div style={{ padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
-    {posts.length === 0 ? (
-      <div style={{ textAlign: 'center', padding: '40px', color: '#475569', fontSize: '13px', gridColumn: '1/-1' }}>
-        <div style={{ fontSize: '28px', marginBottom: '10px' }}>📝</div>
-        No posts yet
-      </div>
-    ) : posts.map((post) => {
-      const badgeStyle = getBadgeStyle(post.postType)
-      const typeGlow = {
-        QUESTION: 'rgba(96,165,250,0.06)',
-        ARTICLE: 'rgba(74,222,128,0.06)',
-        DISCUSSION: 'rgba(192,132,252,0.06)',
-      }
-      return (
-        <div key={post.id} onClick={() => navigate(`/post/${post.id}`)}
-          style={{
-            background: typeGlow[post.postType] || '#0a0a0f',
-            border: '1px solid #1e293b',
-            borderRadius: '12px', padding: '16px',
-            cursor: 'pointer', transition: 'all 0.2s',
-            display: 'flex', flexDirection: 'column', gap: '10px',
-            position: 'relative', overflow: 'hidden'
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.borderColor = '#334155'
-            e.currentTarget.style.transform = 'translateY(-2px)'
-            e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.borderColor = '#1e293b'
-            e.currentTarget.style.transform = 'translateY(0)'
-            e.currentTarget.style.boxShadow = 'none'
-          }}
-        >
-          {/* Subtle corner accent */}
-          <div style={{
-            position: 'absolute', top: 0, right: 0,
-            width: '60px', height: '60px',
-            background: `radial-gradient(circle at top right, ${
-              post.postType === 'QUESTION' ? 'rgba(96,165,250,0.08)' :
-              post.postType === 'ARTICLE' ? 'rgba(74,222,128,0.08)' :
-              'rgba(192,132,252,0.08)'
-            }, transparent 70%)`,
-            pointerEvents: 'none'
-          }} />
-
-          {/* Top row */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{
-              fontSize: '10px', padding: '3px 8px', borderRadius: '20px',
-              fontWeight: '600', ...badgeStyle
+      {/* BOTTOM ROW — Posts */}
+      <div style={{ background: '#0d0d18', border: '1px solid #1e293b', borderRadius: '12px', overflow: 'hidden' }}>
+        <div style={{ padding: '14px 20px', borderBottom: '1px solid #1e293b', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <h2 style={{ fontSize: '14px', fontWeight: '600', color: '#f1f5f9', margin: 0 }}>
+            Posts <span style={{ marginLeft: '6px', fontSize: '12px', color: '#475569', fontWeight: '400' }}>{posts.length}</span>
+          </h2>
+          {isOwnProfile && (
+            <button onClick={() => navigate('/create-post')} style={{
+              padding: '6px 14px', borderRadius: '7px', border: 'none',
+              background: '#00ff87', color: '#000', fontSize: '12px',
+              fontWeight: '700', cursor: 'pointer', fontFamily: 'Inter, sans-serif'
             }}>
-              {post.postType}
-            </span>
-            <span style={{ fontSize: '11px', color: '#475569' }}>
-              {timeAgo(post.createdAt)}
-            </span>
-          </div>
-
-          {/* Title */}
-          <div style={{
-            fontSize: '14px', fontWeight: '600', color: '#f1f5f9',
-            lineHeight: '1.4', letterSpacing: '-0.2px'
-          }}>
-            {post.title}
-          </div>
-
-          {/* Content preview */}
-          <div style={{
-            fontSize: '12px', color: '#64748b', lineHeight: '1.5',
-            display: '-webkit-box', WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1
-          }}>
-            {post.content}
-          </div>
-
-          {/* Tags */}
-          {post.tags && (
-            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-              {post.tags.split(',').slice(0, 3).map(tag => (
-                <span key={tag} style={{
-                  fontSize: '10px', padding: '2px 6px', borderRadius: '4px',
-                  background: '#1e293b', color: '#64748b'
-                }}>
-                  #{tag.trim()}
-                </span>
-              ))}
-            </div>
+              + New Post
+            </button>
           )}
-
-          {/* Footer */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            paddingTop: '10px', borderTop: '1px solid #1e293b'
-          }}>
-            <button onClick={e => handleLike(e, post.id)} style={{
-              display: 'flex', alignItems: 'center', gap: '4px',
-              fontSize: '12px', color: '#475569', background: 'transparent',
-              border: 'none', cursor: 'pointer', padding: '3px 7px',
-              borderRadius: '5px', fontFamily: 'Inter, sans-serif'
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(248,113,113,0.1)'; e.currentTarget.style.color = '#f87171' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569' }}
-            >
-              <Heart size={12} /> {post.likesCount}
-            </button>
-
-            <button onClick={e => { e.stopPropagation(); navigate(`/post/${post.id}`) }} style={{
-              display: 'flex', alignItems: 'center', gap: '4px',
-              fontSize: '12px', color: '#475569', background: 'transparent',
-              border: 'none', cursor: 'pointer', padding: '3px 7px',
-              borderRadius: '5px', fontFamily: 'Inter, sans-serif'
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(96,165,250,0.1)'; e.currentTarget.style.color = '#60a5fa' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569' }}
-            >
-              <MessageCircle size={12} /> {post.commentsCount}
-            </button>
-
-            <div style={{ flex: 1 }} />
-
-            <span style={{ fontSize: '11px', color: '#334155' }}>
-              {post.viewCount} views
-            </span>
-          </div>
         </div>
-        )
-        })}
-    </div>
-    </div>
+        <div style={{ padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
+          {posts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#475569', fontSize: '13px', gridColumn: '1/-1' }}>
+              <div style={{ fontSize: '28px', marginBottom: '10px' }}>📝</div>
+              No posts yet
+            </div>
+          ) : posts.map((post) => {
+            const badgeStyle = getBadgeStyle(post.postType)
+            const typeGlow = {
+              QUESTION: 'rgba(96,165,250,0.06)',
+              ARTICLE: 'rgba(74,222,128,0.06)',
+              DISCUSSION: 'rgba(192,132,252,0.06)',
+            }
+            return (
+              <div key={post.id} onClick={() => navigate(`/post/${post.id}`)}
+                style={{
+                  background: typeGlow[post.postType] || '#0a0a0f',
+                  border: '1px solid #1e293b', borderRadius: '12px', padding: '16px',
+                  cursor: 'pointer', transition: 'all 0.2s',
+                  display: 'flex', flexDirection: 'column', gap: '10px',
+                  position: 'relative', overflow: 'hidden'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#334155'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#1e293b'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              >
+                <div style={{
+                  position: 'absolute', top: 0, right: 0, width: '60px', height: '60px',
+                  background: `radial-gradient(circle at top right, ${
+                    post.postType === 'QUESTION' ? 'rgba(96,165,250,0.08)' :
+                    post.postType === 'ARTICLE' ? 'rgba(74,222,128,0.08)' :
+                    'rgba(192,132,252,0.08)'
+                  }, transparent 70%)`, pointerEvents: 'none'
+                }} />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '20px', fontWeight: '600', ...badgeStyle }}>
+                    {post.postType}
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#475569' }}>{timeAgo(post.createdAt)}</span>
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: '600', color: '#f1f5f9', lineHeight: '1.4', letterSpacing: '-0.2px' }}>
+                  {post.title}
+                </div>
+                <div style={{
+                  fontSize: '12px', color: '#64748b', lineHeight: '1.5',
+                  display: '-webkit-box', WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1
+                }}>
+                  {post.content}
+                </div>
+                {post.tags && (
+                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                    {post.tags.split(',').slice(0, 3).map(tag => (
+                      <span key={tag} style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', background: '#1e293b', color: '#64748b' }}>
+                        #{tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '10px', borderTop: '1px solid #1e293b' }}>
+                  <button onClick={e => handleLike(e, post.id)} style={{
+                    display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px',
+                    color: '#475569', background: 'transparent', border: 'none',
+                    cursor: 'pointer', padding: '3px 7px', borderRadius: '5px', fontFamily: 'Inter, sans-serif'
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(248,113,113,0.1)'; e.currentTarget.style.color = '#f87171' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569' }}
+                  >
+                    <Heart size={12} /> {post.likesCount}
+                  </button>
+                  <button onClick={e => { e.stopPropagation(); navigate(`/post/${post.id}`) }} style={{
+                    display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px',
+                    color: '#475569', background: 'transparent', border: 'none',
+                    cursor: 'pointer', padding: '3px 7px', borderRadius: '5px', fontFamily: 'Inter, sans-serif'
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(96,165,250,0.1)'; e.currentTarget.style.color = '#60a5fa' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569' }}
+                  >
+                    <MessageCircle size={12} /> {post.commentsCount}
+                  </button>
+                  <div style={{ flex: 1 }} />
+                  <span style={{ fontSize: '11px', color: '#334155' }}>{post.viewCount} views</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </Layout>
   )
 }
