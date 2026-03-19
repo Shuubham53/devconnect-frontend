@@ -5,6 +5,9 @@ import RegisterPage from './pages/RegisterPage'
 import FeedPage from './pages/FeedPage'
 import CreatePostPage from './pages/CreatePostPage'
 import PostDetailPage from './pages/PostDetailPage'
+import ProfilePage from './pages/ProfilePage'
+
+
 
 
 
@@ -29,6 +32,7 @@ function App() {
       <Route path="/feed" element={user ? <FeedPage /> : <Navigate to="/login" />} />
       <Route path="/create-post" element={user ? <CreatePostPage /> : <Navigate to="/login" />} />
       <Route path="/post/:id" element={user ? <PostDetailPage /> : <Navigate to="/login" />} />
+      <Route path="/profile/:username" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
     </Routes>
   )
 }
