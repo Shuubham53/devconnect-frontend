@@ -6,6 +6,15 @@ import FeedPage from './pages/FeedPage'
 import CreatePostPage from './pages/CreatePostPage'
 import PostDetailPage from './pages/PostDetailPage'
 import ProfilePage from './pages/ProfilePage'
+import NotificationsPage from './pages/NotificationsPage'
+import LeaderboardPage from './pages/LeaderboardPage'
+
+
+
+
+
+
+
 
 
 
@@ -33,6 +42,8 @@ function App() {
       <Route path="/create-post" element={user ? <CreatePostPage /> : <Navigate to="/login" />} />
       <Route path="/post/:id" element={user ? <PostDetailPage /> : <Navigate to="/login" />} />
       <Route path="/profile/:username" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
+      <Route path="/notifications" element={user ? <NotificationsPage /> : <Navigate to="/login" />} />
+      <Route path="/leaderboard" element={user ? <LeaderboardPage /> : <Navigate to="/login" />} />  
     </Routes>
   )
 }
