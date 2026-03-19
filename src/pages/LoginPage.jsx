@@ -13,20 +13,24 @@ export default function LoginPage() {
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      const res = await api.post('/api/auth/login', form)
-      const { token, email, username, role } = res.data.data
-      login({ email, username, role }, token)
-      toast.success('Welcome back!')
-      navigate('/feed')
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed')
-    } finally {
-      setLoading(false)
-    }
+  e.preventDefault()
+  setLoading(true)
+  try {
+    const res = await api.post('/api/auth/login', form)
+    console.log('API URL:', import.meta.env.VITE_API_URL)
+    console.log('Login response:', res.data) // ← add this temporarily
+    const { token, email, username, role } = res.data.data
+    login({ email, username, role }, token)
+    toast.success('Welcome back!')
+    navigate('/feed')
+  } catch (err) {
+    console.log('Login error:', err.response?.data) // ← add this
+    toast.error(err.response?.data?.message || 'Login failed')
+  } finally {
+    setLoading(false)
   }
+  }
+
 
   return (
     <div style={{
