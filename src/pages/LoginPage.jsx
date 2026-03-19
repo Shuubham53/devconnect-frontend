@@ -19,7 +19,7 @@ export default function LoginPage() {
     const res = await api.post('/api/auth/login', form)
     console.log('API URL:', import.meta.env.VITE_API_URL)
     console.log('Login response:', res.data) // ← add this temporarily
-    const { token, email, username, role } = res.data.data
+    const { token, email, username, role } = res.data  // ✅
     login({ email, username, role }, token)
     toast.success('Welcome back!')
     navigate('/feed')
