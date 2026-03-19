@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import FeedPage from './pages/FeedPage'
 import CreatePostPage from './pages/CreatePostPage'
+import PostDetailPage from './pages/PostDetailPage'
 
 
 
@@ -27,6 +28,7 @@ function App() {
       <Route path="/" element={<Navigate to={user ? "/feed" : "/login"} />} />
       <Route path="/feed" element={user ? <FeedPage /> : <Navigate to="/login" />} />
       <Route path="/create-post" element={user ? <CreatePostPage /> : <Navigate to="/login" />} />
+      <Route path="/post/:id" element={user ? <PostDetailPage /> : <Navigate to="/login" />} />
     </Routes>
   )
 }

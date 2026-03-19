@@ -170,7 +170,7 @@ export default function CreatePostPage() {
             <input
               type="text" name="tags" value={form.tags}
               onChange={handleChange}
-              placeholder="java, springboot, jwt (comma separated)"
+              placeholder="tags (comma separated)"
               style={inputStyle}
               onFocus={e => e.target.style.borderColor = '#00ff87'}
               onBlur={e => e.target.style.borderColor = '#1e293b'}

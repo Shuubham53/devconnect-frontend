@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { Heart, MessageCircle, Bookmark } from 'lucide-react'
@@ -12,12 +13,15 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('latest')
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   useEffect(() => {
+  if (user) {
     fetchPosts()
     fetchTrending()
     fetchLeaderboard()
-  }, [activeTab])
+  }
+}, [activeTab, user])
 const fetchPosts = async () => {
   try {
     setLoading(true)
