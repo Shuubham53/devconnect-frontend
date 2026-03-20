@@ -76,34 +76,33 @@ export default function LeaderboardPage() {
 
   return (
     <Layout>
-      {/* Remove maxWidth so it uses full width */}
       <div>
 
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
           <div style={{
-            width: '40px', height: '40px', borderRadius: '12px',
+            width: '36px', height: '36px', borderRadius: '10px',
             background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.2)',
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}>
-            <Trophy size={20} color='#FFD700' />
+            <Trophy size={18} color='#FFD700' />
           </div>
           <div>
-            <h1 style={{ fontSize: '22px', fontWeight: '700', color: '#f1f5f9', margin: 0, letterSpacing: '-0.5px' }}>
+            <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#f1f5f9', margin: 0, letterSpacing: '-0.5px' }}>
               Leaderboard
             </h1>
-            <p style={{ fontSize: '13px', color: '#475569', margin: 0 }}>
+            <p style={{ fontSize: '12px', color: '#475569', margin: 0 }}>
               Top developers ranked by contribution score
             </p>
           </div>
         </div>
 
-        {/* Top 4 Cards — 2 cols on mobile */}
+        {/* Top 4 Cards */}
         {top4.length > 0 && (
           <div className="leaderboard-top" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '12px', marginBottom: '20px'
+            gap: '10px', marginBottom: '16px'
           }}>
             {top4.map((dev, i) => {
               const rank = i + 1
@@ -116,13 +115,14 @@ export default function LeaderboardPage() {
                   style={{
                     background: `linear-gradient(160deg, ${rankConfig.glow} 0%, #0d0d18 50%)`,
                     border: `1px solid ${rankConfig.border}`,
-                    borderRadius: '14px', padding: '18px 14px',
+                    borderRadius: '12px',
+                    padding: '12px 10px',
                     textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s',
-                    marginTop: rank === 1 ? '0' : rank === 2 ? '8px' : rank === 3 ? '16px' : '24px'
+                    marginTop: rank === 1 ? '0' : rank === 2 ? '6px' : rank === 3 ? '12px' : '18px'
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.transform = 'translateY(-4px)'
-                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.4)'
+                    e.currentTarget.style.transform = 'translateY(-3px)'
+                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)'
                     e.currentTarget.style.borderColor = rankConfig.color + '50'
                   }}
                   onMouseLeave={e => {
@@ -131,28 +131,50 @@ export default function LeaderboardPage() {
                     e.currentTarget.style.borderColor = rankConfig.border
                   }}
                 >
-                  <div style={{ fontSize: '26px', marginBottom: '10px', lineHeight: 1 }}>{rankConfig.medal}</div>
+                  {/* Medal */}
+                  <div style={{ fontSize: '20px', marginBottom: '6px', lineHeight: 1 }}>
+                    {rankConfig.medal}
+                  </div>
+
+                  {/* Avatar */}
                   <div style={{
-                    width: '52px', height: '52px', borderRadius: '50%',
+                    width: '40px', height: '40px', borderRadius: '50%',
                     background: avatarColor.bg, color: avatarColor.color,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '16px', fontWeight: '700', margin: '0 auto 10px',
+                    fontSize: '13px', fontWeight: '700', margin: '0 auto 8px',
                     border: `2px solid ${rankConfig.color}25`
                   }}>
                     {getInitials(dev.name)}
                   </div>
-                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#f1f5f9', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+
+                  {/* Name */}
+                  <div style={{
+                    fontSize: '12px', fontWeight: '600', color: '#f1f5f9',
+                    marginBottom: '1px', whiteSpace: 'nowrap',
+                    overflow: 'hidden', textOverflow: 'ellipsis'
+                  }}>
                     {dev.name}
                   </div>
-                  <div style={{ fontSize: '10px', color: '#475569', marginBottom: '10px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <div style={{
+                    fontSize: '10px', color: '#475569', marginBottom: '8px',
+                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+                  }}>
                     @{dev.username}
                   </div>
-                  <div style={{ fontSize: '28px', fontWeight: '800', color: rank === 1 ? '#FFD700' : '#00ff87', letterSpacing: '-1px', lineHeight: 1, marginBottom: '2px' }}>
+
+                  {/* Score */}
+                  <div style={{
+                    fontSize: '22px', fontWeight: '800',
+                    color: rank === 1 ? '#FFD700' : '#00ff87',
+                    letterSpacing: '-1px', lineHeight: 1, marginBottom: '1px'
+                  }}>
                     {dev.score}
                   </div>
-                  <div style={{ fontSize: '10px', color: '#475569', marginBottom: '10px' }}>points</div>
+                  <div style={{ fontSize: '9px', color: '#475569', marginBottom: '8px' }}>points</div>
+
+                  {/* Badge */}
                   <span style={{
-                    fontSize: '10px', padding: '3px 8px', borderRadius: '20px', fontWeight: '600',
+                    fontSize: '9px', padding: '2px 6px', borderRadius: '20px', fontWeight: '600',
                     background: badgeConfig.bg, color: badgeConfig.color, border: `1px solid ${badgeConfig.border}`
                   }}>
                     {badgeConfig.emoji} {dev.badge}
