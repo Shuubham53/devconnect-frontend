@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
 import App from './App.jsx'
 import './index.css'
+import './styles/mobile.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

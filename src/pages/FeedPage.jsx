@@ -16,42 +16,40 @@ export default function FeedPage() {
   const { user } = useAuth()
 
   useEffect(() => {
-  if (user) {
-    fetchPosts()
-    fetchTrending()
-    fetchLeaderboard()
-  }
-}, [activeTab, user])
-const fetchPosts = async () => {
-  try {
-    setLoading(true)
-    let res
-    if (activeTab === 'feed') {
-      res = await api.get('/api/posts/feed')
-      setPosts(res.data.data || [])
-    } else if (activeTab === 'trending') {
-      res = await api.get('/api/posts/trending')
-      setPosts(res.data.data || [])
-    } else {
-      res = await api.get('/api/posts?page=0&size=20')
-
-      console.log('Posts response:', res.data)
-
-      const data = res.data.data
-      if (Array.isArray(data)) {
-        setPosts(data)
-      } else if (data?.content) {
-        setPosts(data.content)
-      } else {
-        setPosts([])
-      }
+    if (user) {
+      fetchPosts()
+      fetchTrending()
+      fetchLeaderboard()
     }
-  } catch (err) {
-    toast.error('Failed to load posts')
-  } finally {
-    setLoading(false)
+  }, [activeTab, user])
+
+  const fetchPosts = async () => {
+    try {
+      setLoading(true)
+      let res
+      if (activeTab === 'feed') {
+        res = await api.get('/api/posts/feed')
+        setPosts(res.data.data || [])
+      } else if (activeTab === 'trending') {
+        res = await api.get('/api/posts/trending')
+        setPosts(res.data.data || [])
+      } else {
+        res = await api.get('/api/posts?page=0&size=20')
+        const data = res.data.data
+        if (Array.isArray(data)) {
+          setPosts(data)
+        } else if (data?.content) {
+          setPosts(data.content)
+        } else {
+          setPosts([])
+        }
+      }
+    } catch (err) {
+      toast.error('Failed to load posts')
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
   const fetchTrending = async () => {
     try {
@@ -114,8 +112,7 @@ const fetchPosts = async () => {
       { bg: '#1a1a2e', color: '#f87171' },
       { bg: '#1a2e2e', color: '#34d399' },
     ]
-    const index = name?.charCodeAt(0) % colors.length || 0
-    return colors[index]
+    return colors[name?.charCodeAt(0) % colors.length || 0]
   }
 
   const timeAgo = (dateStr) => {
@@ -130,7 +127,8 @@ const fetchPosts = async () => {
 
   return (
     <Layout>
-      <div style={{ display: 'flex', gap: '24px' }}>
+      {/* feed-layout stacks on mobile */}
+      <div className="feed-layout" style={{ display: 'flex', gap: '24px' }}>
 
         {/* Main Feed */}
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -195,12 +193,8 @@ const fetchPosts = async () => {
                   onMouseLeave={e => e.currentTarget.style.borderColor = '#1e293b'}
                   onClick={() => navigate(`/post/${post.id}`)}
                 >
-
                   {/* Header */}
-                  <div style={{
-                    display: 'flex', alignItems: 'center',
-                    gap: '10px', marginBottom: '14px'
-                  }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
                     <div style={{
                       width: '32px', height: '32px', borderRadius: '50%',
                       background: avatarColor.bg, color: avatarColor.color,
@@ -239,22 +233,17 @@ const fetchPosts = async () => {
                       <div style={{
                         fontSize: '13px', color: '#64748b',
                         lineHeight: '1.6', marginBottom: '12px',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
+                        display: '-webkit-box', WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical', overflow: 'hidden'
                       }}>
                         {post.content}
                       </div>
-
-                      {/* Tags */}
                       {post.tags && (
                         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                           {post.tags.split(',').map(tag => (
                             <span key={tag} style={{
                               fontSize: '11px', padding: '3px 8px',
-                              borderRadius: '6px', background: '#1e293b',
-                              color: '#94a3b8'
+                              borderRadius: '6px', background: '#1e293b', color: '#94a3b8'
                             }}>
                               {tag.trim()}
                             </span>
@@ -262,69 +251,53 @@ const fetchPosts = async () => {
                         </div>
                       )}
                     </div>
-
-                    {/* Thumbnail */}
                     {post.imageUrl && (
                       <div style={{
                         width: '100px', height: '80px',
-                        borderRadius: '8px', overflow: 'hidden',
-                        flexShrink: 0
+                        borderRadius: '8px', overflow: 'hidden', flexShrink: 0
                       }}>
                         <img src={post.imageUrl} alt="post"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       </div>
                     )}
                   </div>
 
                   {/* Footer */}
                   <div style={{
-                    display: 'flex', alignItems: 'center',
-                    gap: '4px', paddingTop: '14px',
-                    borderTop: '1px solid #1e293b', marginTop: '14px'
+                    display: 'flex', alignItems: 'center', gap: '4px',
+                    paddingTop: '14px', borderTop: '1px solid #1e293b', marginTop: '14px'
                   }}>
-                    <button
-                      onClick={e => { e.stopPropagation(); handleLike(post.id) }}
+                    <button onClick={e => { e.stopPropagation(); handleLike(post.id) }}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '5px',
                         fontSize: '12px', color: '#475569', padding: '5px 10px',
-                        borderRadius: '6px', border: 'none',
-                        background: 'transparent', cursor: 'pointer',
-                        fontFamily: 'Inter, sans-serif'
+                        borderRadius: '6px', border: 'none', background: 'transparent',
+                        cursor: 'pointer', fontFamily: 'Inter, sans-serif'
                       }}
                       onMouseEnter={e => e.currentTarget.style.background = '#1e293b'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      <Heart size={13} />
-                      {post.likesCount}
+                      <Heart size={13} /> {post.likesCount}
                     </button>
-
-                    <button
-                      onClick={e => { e.stopPropagation(); navigate(`/post/${post.id}`) }}
+                    <button onClick={e => { e.stopPropagation(); navigate(`/post/${post.id}`) }}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '5px',
                         fontSize: '12px', color: '#475569', padding: '5px 10px',
-                        borderRadius: '6px', border: 'none',
-                        background: 'transparent', cursor: 'pointer',
-                        fontFamily: 'Inter, sans-serif'
+                        borderRadius: '6px', border: 'none', background: 'transparent',
+                        cursor: 'pointer', fontFamily: 'Inter, sans-serif'
                       }}
                       onMouseEnter={e => e.currentTarget.style.background = '#1e293b'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      <MessageCircle size={13} />
-                      {post.commentsCount}
+                      <MessageCircle size={13} /> {post.commentsCount}
                     </button>
-
                     <div style={{ flex: 1 }} />
-
-                    <button
-                      onClick={e => { e.stopPropagation(); handleBookmark(post.id) }}
+                    <button onClick={e => { e.stopPropagation(); handleBookmark(post.id) }}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '5px',
                         fontSize: '12px', color: '#475569', padding: '5px 10px',
-                        borderRadius: '6px', border: 'none',
-                        background: 'transparent', cursor: 'pointer',
-                        fontFamily: 'Inter, sans-serif'
+                        borderRadius: '6px', border: 'none', background: 'transparent',
+                        cursor: 'pointer', fontFamily: 'Inter, sans-serif'
                       }}
                       onMouseEnter={e => e.currentTarget.style.background = '#1e293b'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
@@ -338,10 +311,8 @@ const fetchPosts = async () => {
           )}
         </div>
 
-        {/* Right Panel */}
-        {/* Right Panel */}
-        <div className="right-panel" style={{ width: '260px', flexShrink: 0 }}></div>
-        <div style={{ width: '260px', flexShrink: 0 }}>
+        {/* Right Panel — hidden on mobile */}
+        <div className="right-panel" style={{ width: '260px', flexShrink: 0 }}>
 
           {/* Leaderboard */}
           <div style={{
@@ -357,13 +328,8 @@ const fetchPosts = async () => {
             {leaderboard.map((dev, i) => {
               const avatarColor = getAvatarColor(dev.name)
               return (
-                <div key={dev.id} style={{
-                  display: 'flex', alignItems: 'center',
-                  gap: '10px', marginBottom: '12px'
-                }}>
-                  <div style={{ fontSize: '11px', color: '#475569', width: '16px' }}>
-                    {i + 1}
-                  </div>
+                <div key={dev.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <div style={{ fontSize: '11px', color: '#475569', width: '16px' }}>{i + 1}</div>
                   <div style={{
                     width: '28px', height: '28px', borderRadius: '50%',
                     background: avatarColor.bg, color: avatarColor.color,
@@ -373,19 +339,12 @@ const fetchPosts = async () => {
                     {getInitials(dev.name)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      fontSize: '13px', color: '#e2e8f0',
-                      whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
-                    }}>
+                    <div style={{ fontSize: '13px', color: '#e2e8f0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {dev.name}
                     </div>
-                    <div style={{ fontSize: '10px', color: '#475569' }}>
-                      {dev.badge}
-                    </div>
+                    <div style={{ fontSize: '10px', color: '#475569' }}>{dev.badge}</div>
                   </div>
-                  <div style={{ fontSize: '12px', color: '#00ff87', fontWeight: '600' }}>
-                    {dev.score}
-                  </div>
+                  <div style={{ fontSize: '12px', color: '#00ff87', fontWeight: '600' }}>{dev.score}</div>
                 </div>
               )
             })}
@@ -404,8 +363,7 @@ const fetchPosts = async () => {
             </div>
             {trending.map((post, i) => (
               <div key={i} style={{
-                display: 'flex', alignItems: 'center',
-                justifyContent: 'space-between',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '8px 0',
                 borderBottom: i < trending.length - 1 ? '1px solid #1e293b' : 'none'
               }}>

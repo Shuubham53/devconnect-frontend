@@ -14,9 +14,7 @@ export default function LeaderboardPage() {
   const TOP_COUNT = 4
   const PAGE_SIZE = 7
 
-  useEffect(() => {
-    fetchLeaderboard()
-  }, [])
+  useEffect(() => { fetchLeaderboard() }, [])
 
   const fetchLeaderboard = async () => {
     try {
@@ -78,7 +76,8 @@ export default function LeaderboardPage() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: '760px' }}>
+      {/* Remove maxWidth so it uses full width */}
+      <div>
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
@@ -99,9 +98,9 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Top 4 Cards */}
+        {/* Top 4 Cards — 2 cols on mobile */}
         {top4.length > 0 && (
-          <div style={{
+          <div className="leaderboard-top" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '12px', marginBottom: '20px'
@@ -111,7 +110,6 @@ export default function LeaderboardPage() {
               const rankConfig = getRankConfig(rank)
               const avatarColor = getAvatarColor(dev.name)
               const badgeConfig = getBadgeConfig(dev.badge)
-
               return (
                 <div key={dev.id}
                   onClick={() => navigate(`/profile/${dev.username}`)}
@@ -119,13 +117,12 @@ export default function LeaderboardPage() {
                     background: `linear-gradient(160deg, ${rankConfig.glow} 0%, #0d0d18 50%)`,
                     border: `1px solid ${rankConfig.border}`,
                     borderRadius: '14px', padding: '18px 14px',
-                    textAlign: 'center', cursor: 'pointer',
-                    transition: 'all 0.2s',
+                    textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s',
                     marginTop: rank === 1 ? '0' : rank === 2 ? '8px' : rank === 3 ? '16px' : '24px'
                   }}
                   onMouseEnter={e => {
                     e.currentTarget.style.transform = 'translateY(-4px)'
-                    e.currentTarget.style.boxShadow = `0 12px 32px rgba(0,0,0,0.4)`
+                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.4)'
                     e.currentTarget.style.borderColor = rankConfig.color + '50'
                   }}
                   onMouseLeave={e => {
@@ -134,12 +131,7 @@ export default function LeaderboardPage() {
                     e.currentTarget.style.borderColor = rankConfig.border
                   }}
                 >
-                  {/* Medal */}
-                  <div style={{ fontSize: '26px', marginBottom: '10px', lineHeight: 1 }}>
-                    {rankConfig.medal}
-                  </div>
-
-                  {/* Avatar */}
+                  <div style={{ fontSize: '26px', marginBottom: '10px', lineHeight: 1 }}>{rankConfig.medal}</div>
                   <div style={{
                     width: '52px', height: '52px', borderRadius: '50%',
                     background: avatarColor.bg, color: avatarColor.color,
@@ -149,30 +141,16 @@ export default function LeaderboardPage() {
                   }}>
                     {getInitials(dev.name)}
                   </div>
-
-                  {/* Name */}
-                  <div style={{
-                    fontSize: '13px', fontWeight: '600', color: '#f1f5f9',
-                    marginBottom: '2px', whiteSpace: 'nowrap',
-                    overflow: 'hidden', textOverflow: 'ellipsis'
-                  }}>
+                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#f1f5f9', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {dev.name}
                   </div>
                   <div style={{ fontSize: '10px', color: '#475569', marginBottom: '10px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     @{dev.username}
                   </div>
-
-                  {/* Score */}
-                  <div style={{
-                    fontSize: '28px', fontWeight: '800',
-                    color: rank === 1 ? '#FFD700' : '#00ff87',
-                    letterSpacing: '-1px', lineHeight: 1, marginBottom: '2px'
-                  }}>
+                  <div style={{ fontSize: '28px', fontWeight: '800', color: rank === 1 ? '#FFD700' : '#00ff87', letterSpacing: '-1px', lineHeight: 1, marginBottom: '2px' }}>
                     {dev.score}
                   </div>
                   <div style={{ fontSize: '10px', color: '#475569', marginBottom: '10px' }}>points</div>
-
-                  {/* Badge */}
                   <span style={{
                     fontSize: '10px', padding: '3px 8px', borderRadius: '20px', fontWeight: '600',
                     background: badgeConfig.bg, color: badgeConfig.color, border: `1px solid ${badgeConfig.border}`
@@ -187,12 +165,7 @@ export default function LeaderboardPage() {
 
         {/* Rest — ranked list */}
         {rest.length > 0 && (
-          <div style={{
-            background: '#0d0d18', border: '1px solid #1e293b',
-            borderRadius: '16px', overflow: 'hidden'
-          }}>
-
-            {/* Section label */}
+          <div style={{ background: '#0d0d18', border: '1px solid #1e293b', borderRadius: '16px', overflow: 'hidden' }}>
             <div style={{
               padding: '12px 20px', borderBottom: '1px solid #1e293b',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between'
@@ -201,18 +174,14 @@ export default function LeaderboardPage() {
                 RANKINGS #{TOP_COUNT + 1} — #{TOP_COUNT + rest.length}
               </span>
               {totalPages > 1 && (
-                <span style={{ fontSize: '11px', color: '#475569' }}>
-                  Page {page + 1} of {totalPages}
-                </span>
+                <span style={{ fontSize: '11px', color: '#475569' }}>Page {page + 1} of {totalPages}</span>
               )}
             </div>
 
-            {/* List */}
             {pagedRest.map((dev, i) => {
               const rank = TOP_COUNT + page * PAGE_SIZE + i + 1
               const avatarColor = getAvatarColor(dev.name)
               const badgeConfig = getBadgeConfig(dev.badge)
-
               return (
                 <div key={dev.id}
                   onClick={() => navigate(`/profile/${dev.username}`)}
@@ -225,15 +194,9 @@ export default function LeaderboardPage() {
                   onMouseEnter={e => e.currentTarget.style.background = '#0a0a0f'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  {/* Rank */}
-                  <div style={{
-                    width: '32px', textAlign: 'center', flexShrink: 0,
-                    fontSize: '13px', color: '#475569', fontWeight: '600'
-                  }}>
+                  <div style={{ width: '32px', textAlign: 'center', flexShrink: 0, fontSize: '13px', color: '#475569', fontWeight: '600' }}>
                     #{rank}
                   </div>
-
-                  {/* Avatar */}
                   <div style={{
                     width: '36px', height: '36px', borderRadius: '50%',
                     background: avatarColor.bg, color: avatarColor.color,
@@ -242,28 +205,19 @@ export default function LeaderboardPage() {
                   }}>
                     {getInitials(dev.name)}
                   </div>
-
-                  {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '14px', fontWeight: '500', color: '#e2e8f0', marginBottom: '2px' }}>
                       {dev.name}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ fontSize: '11px', color: '#475569' }}>@{dev.username}</span>
-                      <span style={{
-                        fontSize: '10px', padding: '1px 6px', borderRadius: '20px',
-                        fontWeight: '600', background: badgeConfig.bg, color: badgeConfig.color
-                      }}>
+                      <span style={{ fontSize: '10px', padding: '1px 6px', borderRadius: '20px', fontWeight: '600', background: badgeConfig.bg, color: badgeConfig.color }}>
                         {badgeConfig.emoji} {dev.badge}
                       </span>
                     </div>
                   </div>
-
-                  {/* Score */}
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: '18px', fontWeight: '700', color: '#00ff87', letterSpacing: '-0.5px' }}>
-                      {dev.score}
-                    </div>
+                    <div style={{ fontSize: '18px', fontWeight: '700', color: '#00ff87', letterSpacing: '-0.5px' }}>{dev.score}</div>
                     <div style={{ fontSize: '10px', color: '#475569' }}>pts</div>
                   </div>
                 </div>
@@ -272,26 +226,15 @@ export default function LeaderboardPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                gap: '8px', padding: '14px 20px',
-                borderTop: '1px solid #1e293b'
-              }}>
-                <button
-                  onClick={() => setPage(p => Math.max(0, p - 1))}
-                  disabled={page === 0}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '4px',
-                    padding: '7px 14px', borderRadius: '8px',
-                    background: 'transparent', border: '1px solid #1e293b',
-                    color: page === 0 ? '#334155' : '#94a3b8',
-                    fontSize: '13px', cursor: page === 0 ? 'not-allowed' : 'pointer',
-                    fontFamily: 'Inter, sans-serif'
-                  }}
-                >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px 20px', borderTop: '1px solid #1e293b' }}>
+                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} style={{
+                  display: 'flex', alignItems: 'center', gap: '4px', padding: '7px 14px', borderRadius: '8px',
+                  background: 'transparent', border: '1px solid #1e293b',
+                  color: page === 0 ? '#334155' : '#94a3b8', fontSize: '13px',
+                  cursor: page === 0 ? 'not-allowed' : 'pointer', fontFamily: 'Inter, sans-serif'
+                }}>
                   <ChevronLeft size={14} /> Prev
                 </button>
-
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button key={i} onClick={() => setPage(i)} style={{
                     width: '32px', height: '32px', borderRadius: '8px',
@@ -304,19 +247,12 @@ export default function LeaderboardPage() {
                     {i + 1}
                   </button>
                 ))}
-
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                  disabled={page === totalPages - 1}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '4px',
-                    padding: '7px 14px', borderRadius: '8px',
-                    background: 'transparent', border: '1px solid #1e293b',
-                    color: page === totalPages - 1 ? '#334155' : '#94a3b8',
-                    fontSize: '13px', cursor: page === totalPages - 1 ? 'not-allowed' : 'pointer',
-                    fontFamily: 'Inter, sans-serif'
-                  }}
-                >
+                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page === totalPages - 1} style={{
+                  display: 'flex', alignItems: 'center', gap: '4px', padding: '7px 14px', borderRadius: '8px',
+                  background: 'transparent', border: '1px solid #1e293b',
+                  color: page === totalPages - 1 ? '#334155' : '#94a3b8', fontSize: '13px',
+                  cursor: page === totalPages - 1 ? 'not-allowed' : 'pointer', fontFamily: 'Inter, sans-serif'
+                }}>
                   Next <ChevronRight size={14} />
                 </button>
               </div>

@@ -1,0 +1,77 @@
+@media (max-width: 768px) {
+
+  /* Feed page - stack vertically */
+  .feed-layout {
+    flex-direction: column !important;
+  }
+
+  .right-panel {
+    width: 100% !important;
+  }
+
+  /* Explore page - stack vertically */
+  .explore-layout {
+    flex-direction: column !important;
+  }
+
+  .explore-right {
+    width: 100% !important;
+  }
+
+  /* Profile page - stack vertically */
+  .profile-top-row {
+    flex-direction: column !important;
+  }
+
+  .score-history-panel {
+    width: 100% !important;
+  }
+
+  /* Fix text overflow everywhere */
+  * {
+    word-break: break-word;
+  }
+
+  /* Cards full width */
+  .post-card {
+    width: 100% !important;
+  }
+  /* Hide sidebar on mobile */
+  .sidebar {
+    display: none !important;
+  }
+
+  /* Remove sidebar margin */
+  .main-content {
+    margin-left: 0 !important;
+    padding: 16px !important;
+    padding-bottom: 80px !important;
+  }
+
+  /* Show mobile nav */
+  .mobile-nav {
+    display: flex !important;
+  }
+
+  /* Posts grid - single column */
+  .posts-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Leaderboard top cards - 2 per row */
+  .leaderboard-top {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Fix padding on all pages */
+  .main-content {
+    padding: 16px !important;
+    padding-bottom: 80px !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-nav {
+    display: none !important;
+  }
+}
