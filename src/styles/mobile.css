@@ -1,87 +1,94 @@
 @media (max-width: 768px) {
 
-  /* Feed page - stack vertically */
+  /* Hide sidebar */
+  .sidebar {
+    display: none !important;
+  }
+
+  /* Main content full width — no sidebar margin */
+  .main-content {
+    margin-left: 0 !important;
+    padding: 16px !important;
+    padding-bottom: 80px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Show mobile bottom nav */
+  .mobile-nav {
+    display: flex !important;
+  }
+
+  /* Feed — stack vertically */
   .feed-layout {
     flex-direction: column !important;
   }
 
+  /* Right panels full width */
   .right-panel {
     width: 100% !important;
+    flex-shrink: unset !important;
   }
 
-  /* Explore page - stack vertically */
+  /* Explore — stack vertically */
   .explore-layout {
     flex-direction: column !important;
   }
 
   .explore-right {
     width: 100% !important;
-  }
-
-  /* Profile page - stack vertically */
-   .score-history-panel {
-    width: 100% !important;
     flex-shrink: unset !important;
   }
 
-  /* Profile card full width */
+  /* Profile — stack vertically */
+  .profile-top-row {
+    flex-direction: column !important;
+  }
+
   .profile-top-row > div {
     width: 100% !important;
     flex: unset !important;
     min-width: unset !important;
+    flex-shrink: unset !important;
   }
 
-  /* Fix text overflow everywhere */
-  * {
-    word-break: break-word;
-  }
-
-  /* Cards full width */
-  .post-card {
+  /* Score history full width */
+  .score-history-panel {
     width: 100% !important;
-  }
-  /* Hide sidebar on mobile */
-  .sidebar {
-    display: none !important;
+    flex-shrink: unset !important;
   }
 
-  /* Remove sidebar margin */
-  .main-content {
-    margin-left: 0 !important;
-    padding: 16px !important;
-    padding-bottom: 80px !important;
-  }
-
-  /* Show mobile nav */
-  .mobile-nav {
-    display: flex !important;
-  }
-
-  /* Posts grid - single column */
+  /* Posts grid single column */
   .posts-grid {
     grid-template-columns: 1fr !important;
   }
 
-  /* Leaderboard top cards - 2 per row */
+  /* Leaderboard 2 cols */
   .leaderboard-top {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* Fix padding on all pages */
-  .main-content {
-    padding: 16px !important;
-    padding-bottom: 80px !important;
-  }
-}
-@media (max-width: 768px) {
-  .sidebar {
-    display: none !important;
+  /* Fix all text overflow */
+  * {
+    word-break: break-word;
+    max-width: 100%;
   }
 
-  .main-content {
-    margin-left: 0 !important;
-    padding: 16px !important;
-    padding-bottom: 80px !important;
+  /* Fix search bar button overflow */
+  .search-bar-wrapper {
+    position: relative !important;
+  }
+
+  /* Force all page containers full width */
+  .main-content > div {
     width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-nav {
+    display: none !important;
   }
 }
