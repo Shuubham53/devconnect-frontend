@@ -17,30 +17,20 @@ export default function LoginPage() {
   setLoading(true)
   try {
     const res = await api.post('/api/auth/login', form)
-    console.log('Full response:', JSON.stringify(res.data)) // ← log everything
-    const { token, email, username, role } = res.data
-    login({ email, username, role }, token)
+    const data = res.data.data  // ← get nested data
+    login(
+      { email: data.email, username: data.username, role: data.role },
+      data.token
+    )
     toast.success('Welcome back!')
     navigate('/feed')
   } catch (err) {
-    console.log('Full error:', JSON.stringify(err.response?.data))
     toast.error(err.response?.data?.message || 'Login failed')
+  } finally {
+    setLoading(false)
   }
-  // try {
-  //   const res = await api.post('/api/auth/login', form)
-  //   console.log('API URL:', import.meta.env.VITE_API_URL)
-  //   console.log('Login response:', res.data) // ← add this temporarily
-  //   const { token, email, username, role } = res.data  // ✅
-  //   login({ email, username, role }, token)
-  //   toast.success('Welcome back!')
-  //   navigate('/feed')
-  // } catch (err) {
-  //   console.log('Login error:', err.response?.data) // ← add this
-  //   toast.error(err.response?.data?.message || 'Login failed')
-  // } finally {
-  //   setLoading(false)
-  // }
-  }
+ 
+}
   
 
 
