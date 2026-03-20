@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { Home, Compass, Bell, User, Search } from 'lucide-react'
+import { Home, Compass, Bell, User, Search, Trophy } from 'lucide-react'
 
 export default function MobileNav() {
   const { pathname } = useLocation()
@@ -10,6 +10,7 @@ export default function MobileNav() {
     { icon: Home, path: '/feed' },
     { icon: Compass, path: '/explore' },
     { icon: Search, path: '/search' },
+    { icon: Trophy, path: '/leaderboard' },
     { icon: Bell, path: '/notifications' },
     { icon: User, path: `/profile/${user?.username}` },
   ]
@@ -27,7 +28,7 @@ export default function MobileNav() {
           <Link key={path} to={path} style={{ textDecoration: 'none' }}>
             <div style={{
               display: 'flex', flexDirection: 'column',
-              alignItems: 'center', padding: '6px 16px',
+              alignItems: 'center', padding: '6px 12px',
               color: isActive ? '#00ff87' : '#475569',
               borderRadius: '8px',
               background: isActive ? 'rgba(0,255,135,0.08)' : 'transparent'
