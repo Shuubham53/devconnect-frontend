@@ -19,12 +19,16 @@
   }
 
   /* Profile page - stack vertically */
-  .profile-top-row {
-    flex-direction: column !important;
+   .score-history-panel {
+    width: 100% !important;
+    flex-shrink: unset !important;
   }
 
-  .score-history-panel {
+  /* Profile card full width */
+  .profile-top-row > div {
     width: 100% !important;
+    flex: unset !important;
+    min-width: unset !important;
   }
 
   /* Fix text overflow everywhere */
@@ -69,9 +73,15 @@
     padding-bottom: 80px !important;
   }
 }
-
-@media (min-width: 769px) {
-  .mobile-nav {
+@media (max-width: 768px) {
+  .sidebar {
     display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding: 16px !important;
+    padding-bottom: 80px !important;
+    width: 100% !important;
   }
 }

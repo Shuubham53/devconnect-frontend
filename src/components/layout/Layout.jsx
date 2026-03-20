@@ -9,11 +9,15 @@ export default function Layout({ children }) {
     }}>
       <Sidebar />
       <main className="main-content" style={{
-  marginLeft: '220px', flex: 1,
-  padding: '28px', minWidth: 0,
-  paddingBottom: '80px' // space for mobile nav
-}}>
-  {children}
+        marginLeft: '220px',
+        flex: 1,
+        padding: '28px',
+        minWidth: 0,
+        paddingBottom: '80px',
+        boxSizing: 'border-box',
+        width: '100%'
+      }}>
+        {children}
       </main>
       <MobileNav />
     </div>
