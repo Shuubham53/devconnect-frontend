@@ -11,3 +11,49 @@ body {
   color: #e2e8f0;
   font-family: 'Inter', sans-serif;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0d18;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  /* Hide sidebar on mobile */
+  .sidebar {
+    display: none !important;
+  }
+
+  /* Remove sidebar margin on mobile */
+  .main-content {
+    margin-left: 0 !important;
+    padding: 16px !important;
+  }
+
+  /* Bottom nav on mobile */
+  .mobile-nav {
+    display: flex !important;
+  }
+
+  /* Stack flex layouts */
+  .responsive-flex {
+    flex-direction: column !important;
+  }
+
+  /* Full width panels on mobile */
+  .right-panel {
+    width: 100% !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-nav {
+    display: none !important;
+  }
+}

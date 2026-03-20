@@ -46,7 +46,7 @@ export default function Sidebar() {
   ]
 
   return (
-    <div style={{
+    <div className="sidebar" style={{
       width: '220px', minHeight: '100vh',
       background: '#0d0d18', borderRight: '1px solid #1e293b',
       padding: '20px 12px', display: 'flex', flexDirection: 'column',

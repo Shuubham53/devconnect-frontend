@@ -339,6 +339,8 @@ const fetchPosts = async () => {
         </div>
 
         {/* Right Panel */}
+        {/* Right Panel */}
+        <div className="right-panel" style={{ width: '260px', flexShrink: 0 }}></div>
         <div style={{ width: '260px', flexShrink: 0 }}>
 
           {/* Leaderboard */}
