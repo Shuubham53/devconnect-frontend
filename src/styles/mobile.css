@@ -1,16 +1,36 @@
+/* Hide mobile nav by default on desktop */
 .mobile-nav { display: none; }
 
 @media (max-width: 768px) {
-  .sidebar { display: none !important; }
-  .main-content { margin-left: 0 !important; padding: 16px !important; padding-bottom: 80px !important; width: 100% !important; box-sizing: border-box !important; }
+
+  /* Hide top navbar on mobile */
+  .desktop-navbar { display: none !important; }
+
+  /* Show mobile bottom nav */
   .mobile-nav { display: flex !important; }
+
+  /* Full width content, no top navbar space */
+  .main-content {
+    margin-left: 0 !important;
+    padding: 16px !important;
+    padding-top: 12px !important;
+    padding-bottom: 80px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Stack layouts vertically */
   .feed-layout { flex-direction: column !important; }
   .right-panel { width: 100% !important; flex-shrink: unset !important; }
   .explore-layout { flex-direction: column !important; }
   .explore-right { width: 100% !important; flex-shrink: unset !important; }
   .profile-top-row { flex-direction: column !important; }
-  .profile-top-row > div { width: 100% !important; flex: unset !important; min-width: unset !important; flex-shrink: unset !important; }
-  .score-history-panel { width: 100% !important; flex-shrink: unset !important; }
+  .profile-top-row > div {
+    width: 100% !important;
+    flex: unset !important;
+    min-width: unset !important;
+    flex-shrink: unset !important;
+  }
   .posts-grid { grid-template-columns: 1fr !important; }
   .leaderboard-top { grid-template-columns: repeat(2, 1fr) !important; }
   .leaderboard-top > div { padding: 10px 8px !important; margin-top: 0 !important; }
@@ -20,4 +40,5 @@
 
 @media (min-width: 769px) {
   .mobile-nav { display: none !important; }
+  .desktop-navbar { display: block !important; }
 }

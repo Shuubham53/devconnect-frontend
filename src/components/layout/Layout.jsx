@@ -4,7 +4,10 @@ import MobileNav from './MobileNav'
 export default function Layout({ children }) {
   return (
     <div style={{ minHeight: '100vh', background: '#1a1a1a', fontFamily: 'Inter, sans-serif' }}>
-      <Navbar />
+      {/* Navbar — hidden on mobile via CSS */}
+      <div className="desktop-navbar">
+        <Navbar />
+      </div>
       <div className="main-content" style={{
         maxWidth: '1100px',
         margin: '0 auto',
