@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
-import { Heart, MessageCircle, Bookmark } from 'lucide-react'
+import { Heart, MessageCircle, Bookmark, TrendingUp } from 'lucide-react'
 import Layout from '../components/layout/Layout'
 import api from '../services/api'
 
@@ -16,86 +16,50 @@ export default function FeedPage() {
   const { user } = useAuth()
 
   useEffect(() => {
-    if (user) {
-      fetchPosts()
-      fetchTrending()
-      fetchLeaderboard()
-    }
+    if (user) { fetchPosts(); fetchTrending(); fetchLeaderboard() }
   }, [activeTab, user])
 
   const fetchPosts = async () => {
     try {
       setLoading(true)
       let res
-      if (activeTab === 'feed') {
-        res = await api.get('/api/posts/feed')
-        setPosts(res.data.data || [])
-      } else if (activeTab === 'trending') {
-        res = await api.get('/api/posts/trending')
-        setPosts(res.data.data || [])
-      } else {
+      if (activeTab === 'feed') { res = await api.get('/api/posts/feed'); setPosts(res.data.data || []) }
+      else if (activeTab === 'trending') { res = await api.get('/api/posts/trending'); setPosts(res.data.data || []) }
+      else {
         res = await api.get('/api/posts?page=0&size=20')
         const data = res.data.data
-        if (Array.isArray(data)) {
-          setPosts(data)
-        } else if (data?.content) {
-          setPosts(data.content)
-        } else {
-          setPosts([])
-        }
+        if (Array.isArray(data)) setPosts(data)
+        else if (data?.content) setPosts(data.content)
+        else setPosts([])
       }
-    } catch (err) {
-      toast.error('Failed to load posts')
-    } finally {
-      setLoading(false)
-    }
+    } catch (err) { toast.error('Failed to load posts') }
+    finally { setLoading(false) }
   }
 
   const fetchTrending = async () => {
-    try {
-      const res = await api.get('/api/posts/trending')
-      setTrending(res.data.data?.slice(0, 5) || [])
-    } catch (err) {}
+    try { const res = await api.get('/api/posts/trending'); setTrending(res.data.data?.slice(0, 5) || []) } catch (err) {}
   }
 
   const fetchLeaderboard = async () => {
-    try {
-      const res = await api.get('/api/users/leaderboard')
-      setLeaderboard(res.data.data?.slice(0, 5) || [])
-    } catch (err) {}
+    try { const res = await api.get('/api/users/leaderboard'); setLeaderboard(res.data.data?.slice(0, 5) || []) } catch (err) {}
   }
 
   const handleLike = async (postId) => {
-    try {
-      await api.post(`/api/likes/${postId}`)
-      fetchPosts()
-      toast.success('Liked!')
-    } catch (err) {
-      if (err.response?.status === 400) {
-        await api.delete(`/api/likes/${postId}`)
-        fetchPosts()
-      }
-    }
+    try { await api.post(`/api/likes/${postId}`); fetchPosts(); toast.success('Liked!') }
+    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/likes/${postId}`); fetchPosts() } }
   }
 
   const handleBookmark = async (postId) => {
-    try {
-      await api.post(`/api/bookmarks/${postId}`)
-      toast.success('Bookmarked!')
-    } catch (err) {
-      if (err.response?.status === 400) {
-        await api.delete(`/api/bookmarks/${postId}`)
-        toast.success('Removed bookmark')
-      }
-    }
+    try { await api.post(`/api/bookmarks/${postId}`); toast.success('Bookmarked!') }
+    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/bookmarks/${postId}`); toast.success('Removed') } }
   }
 
-  const getBadgeStyle = (type) => {
+  const getTypeStyle = (type) => {
     switch (type) {
-      case 'QUESTION': return { background: '#1e3a5f', color: '#60a5fa' }
-      case 'ARTICLE': return { background: '#1a2e1a', color: '#4ade80' }
-      case 'DISCUSSION': return { background: '#2d1b4e', color: '#c084fc' }
-      default: return { background: '#1e293b', color: '#94a3b8' }
+      case 'QUESTION': return { bg: 'rgba(96,165,250,0.1)', color: '#60a5fa', border: 'rgba(96,165,250,0.2)' }
+      case 'ARTICLE': return { bg: 'rgba(0,184,163,0.1)', color: '#00b8a3', border: 'rgba(0,184,163,0.2)' }
+      case 'DISCUSSION': return { bg: 'rgba(192,132,252,0.1)', color: '#c084fc', border: 'rgba(192,132,252,0.2)' }
+      default: return { bg: '#3d3d3d', color: '#94a3b8', border: '#3d3d3d' }
     }
   }
 
@@ -105,20 +69,12 @@ export default function FeedPage() {
   }
 
   const getAvatarColor = (name) => {
-    const colors = [
-      { bg: '#1e3a5f', color: '#60a5fa' },
-      { bg: '#1a2e1a', color: '#4ade80' },
-      { bg: '#2d1b4e', color: '#c084fc' },
-      { bg: '#1a1a2e', color: '#f87171' },
-      { bg: '#1a2e2e', color: '#34d399' },
-    ]
+    const colors = ['#60a5fa','#00b8a3','#c084fc','#f87171','#34d399']
     return colors[name?.charCodeAt(0) % colors.length || 0]
   }
 
   const timeAgo = (dateStr) => {
-    const date = new Date(dateStr)
-    const now = new Date()
-    const diff = Math.floor((now - date) / 1000)
+    const diff = Math.floor((new Date() - new Date(dateStr)) / 1000)
     if (diff < 60) return 'just now'
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
@@ -127,32 +83,26 @@ export default function FeedPage() {
 
   return (
     <Layout>
-      {/* feed-layout stacks on mobile */}
-      <div className="feed-layout" style={{ display: 'flex', gap: '24px' }}>
+      <div className="feed-layout" style={{ display: 'flex', gap: '20px' }}>
 
         {/* Main Feed */}
         <div style={{ flex: 1, minWidth: 0 }}>
 
           {/* Tabs */}
           <div style={{
-            display: 'flex', gap: '4px', marginBottom: '20px',
-            background: '#0d0d18', padding: '4px',
-            borderRadius: '10px', border: '1px solid #1e293b'
+            display: 'flex', gap: '2px', marginBottom: '16px',
+            background: '#282828', padding: '4px', borderRadius: '8px',
+            border: '1px solid #3d3d3d'
           }}>
-            {[
-              { key: 'latest', label: 'Latest' },
-              { key: 'feed', label: 'Following' },
-              { key: 'trending', label: 'Trending' },
-            ].map(tab => (
-              <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-                style={{
-                  flex: 1, padding: '8px', borderRadius: '7px',
-                  border: 'none', cursor: 'pointer', fontSize: '13px',
-                  fontWeight: activeTab === tab.key ? '600' : '400',
-                  background: activeTab === tab.key ? '#1e293b' : 'transparent',
-                  color: activeTab === tab.key ? '#e2e8f0' : '#64748b',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
+            {[{ key: 'latest', label: 'Latest' }, { key: 'feed', label: 'Following' }, { key: 'trending', label: 'Trending' }].map(tab => (
+              <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+                flex: 1, padding: '7px', borderRadius: '6px', border: 'none',
+                cursor: 'pointer', fontSize: '13px',
+                fontWeight: activeTab === tab.key ? '600' : '400',
+                background: activeTab === tab.key ? '#3d3d3d' : 'transparent',
+                color: activeTab === tab.key ? '#eff1f6' : '#64748b',
+                fontFamily: 'Inter, sans-serif'
+              }}>
                 {tab.label}
               </button>
             ))}
@@ -160,219 +110,125 @@ export default function FeedPage() {
 
           {/* Posts */}
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#475569' }}>
-              Loading posts...
-            </div>
+            <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', fontSize: '13px' }}>Loading...</div>
           ) : posts.length === 0 ? (
-            <div style={{
-              textAlign: 'center', padding: '60px 20px',
-              background: '#0d0d18', borderRadius: '12px',
-              border: '1px solid #1e293b'
-            }}>
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>👋</div>
-              <div style={{ color: '#e2e8f0', fontWeight: '600', marginBottom: '8px' }}>
-                No posts yet
-              </div>
-              <div style={{ color: '#475569', fontSize: '13px' }}>
-                Be the first to create a post!
-              </div>
+            <div style={{ textAlign: 'center', padding: '60px 20px', background: '#282828', borderRadius: '8px', border: '1px solid #3d3d3d' }}>
+              <div style={{ fontSize: '28px', marginBottom: '10px' }}>👋</div>
+              <div style={{ color: '#eff1f6', fontWeight: '600', marginBottom: '6px', fontSize: '14px' }}>No posts yet</div>
+              <div style={{ color: '#64748b', fontSize: '13px' }}>Be the first to create a post!</div>
             </div>
-          ) : (
-            posts.map(post => {
-              const avatarColor = getAvatarColor(post.authorName)
-              const badgeStyle = getBadgeStyle(post.postType)
-              return (
-                <div key={post.id}
-                  style={{
-                    background: '#0d0d18', border: '1px solid #1e293b',
-                    borderRadius: '12px', padding: '20px',
-                    marginBottom: '12px', cursor: 'pointer',
-                    transition: 'border-color 0.15s'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = '#334155'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#1e293b'}
-                  onClick={() => navigate(`/post/${post.id}`)}
-                >
-                  {/* Header */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                    <div style={{
-                      width: '32px', height: '32px', borderRadius: '50%',
-                      background: avatarColor.bg, color: avatarColor.color,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '11px', fontWeight: '700', flexShrink: 0
-                    }}>
-                      {getInitials(post.authorName)}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '13px', fontWeight: '500', color: '#e2e8f0' }}>
-                        {post.authorName}
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#475569' }}>
-                        {timeAgo(post.createdAt)}
-                      </div>
-                    </div>
-                    <span style={{
-                      fontSize: '10px', padding: '3px 8px',
-                      borderRadius: '20px', fontWeight: '600',
-                      letterSpacing: '0.3px', ...badgeStyle
-                    }}>
-                      {post.postType}
-                    </span>
+          ) : posts.map(post => {
+            const typeStyle = getTypeStyle(post.postType)
+            const color = getAvatarColor(post.authorName)
+            return (
+              <div key={post.id}
+                style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '16px', marginBottom: '8px', cursor: 'pointer', transition: 'border-color 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = '#555'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = '#3d3d3d'}
+                onClick={() => navigate(`/post/${post.id}`)}
+              >
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: `${color}20`, border: `1px solid ${color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '700', color, flexShrink: 0 }}>
+                    {getInitials(post.authorName)}
                   </div>
+                  <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: '500' }}>{post.authorName}</span>
+                  <span style={{ fontSize: '11px', color: '#3d3d3d' }}>·</span>
+                  <span style={{ fontSize: '11px', color: '#64748b' }}>{timeAgo(post.createdAt)}</span>
+                  <span style={{ marginLeft: 'auto', fontSize: '10px', padding: '2px 7px', borderRadius: '4px', fontWeight: '600', background: typeStyle.bg, color: typeStyle.color, border: `1px solid ${typeStyle.border}` }}>
+                    {post.postType}
+                  </span>
+                </div>
 
-                  {/* Body */}
-                  <div style={{ display: 'flex', gap: '16px' }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{
-                        fontSize: '16px', fontWeight: '600',
-                        color: '#f1f5f9', marginBottom: '8px',
-                        lineHeight: '1.4', letterSpacing: '-0.2px'
-                      }}>
-                        {post.title}
-                      </div>
-                      <div style={{
-                        fontSize: '13px', color: '#64748b',
-                        lineHeight: '1.6', marginBottom: '12px',
-                        display: '-webkit-box', WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical', overflow: 'hidden'
-                      }}>
-                        {post.content}
-                      </div>
-                      {post.tags && (
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          {post.tags.split(',').map(tag => (
-                            <span key={tag} style={{
-                              fontSize: '11px', padding: '3px 8px',
-                              borderRadius: '6px', background: '#1e293b', color: '#94a3b8'
-                            }}>
-                              {tag.trim()}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                {/* Body */}
+                <div style={{ display: 'flex', gap: '14px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#eff1f6', marginBottom: '6px', lineHeight: '1.4' }}>
+                      {post.title}
                     </div>
-                    {post.imageUrl && (
-                      <div style={{
-                        width: '100px', height: '80px',
-                        borderRadius: '8px', overflow: 'hidden', flexShrink: 0
-                      }}>
-                        <img src={post.imageUrl} alt="post"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.5', marginBottom: '10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {post.content}
+                    </div>
+                    {post.tags && (
+                      <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                        {post.tags.split(',').map(tag => (
+                          <span key={tag} style={{ fontSize: '11px', padding: '2px 7px', borderRadius: '4px', background: '#1a1a1a', color: '#64748b', border: '1px solid #3d3d3d' }}>
+                            {tag.trim()}
+                          </span>
+                        ))}
                       </div>
                     )}
                   </div>
-
-                  {/* Footer */}
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: '4px',
-                    paddingTop: '14px', borderTop: '1px solid #1e293b', marginTop: '14px'
-                  }}>
-                    <button onClick={e => { e.stopPropagation(); handleLike(post.id) }}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: '5px',
-                        fontSize: '12px', color: '#475569', padding: '5px 10px',
-                        borderRadius: '6px', border: 'none', background: 'transparent',
-                        cursor: 'pointer', fontFamily: 'Inter, sans-serif'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#1e293b'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      <Heart size={13} /> {post.likesCount}
-                    </button>
-                    <button onClick={e => { e.stopPropagation(); navigate(`/post/${post.id}`) }}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: '5px',
-                        fontSize: '12px', color: '#475569', padding: '5px 10px',
-                        borderRadius: '6px', border: 'none', background: 'transparent',
-                        cursor: 'pointer', fontFamily: 'Inter, sans-serif'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#1e293b'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      <MessageCircle size={13} /> {post.commentsCount}
-                    </button>
-                    <div style={{ flex: 1 }} />
-                    <button onClick={e => { e.stopPropagation(); handleBookmark(post.id) }}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: '5px',
-                        fontSize: '12px', color: '#475569', padding: '5px 10px',
-                        borderRadius: '6px', border: 'none', background: 'transparent',
-                        cursor: 'pointer', fontFamily: 'Inter, sans-serif'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#1e293b'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      <Bookmark size={13} />
-                    </button>
-                  </div>
+                  {post.imageUrl && (
+                    <div style={{ width: '90px', height: '70px', borderRadius: '6px', overflow: 'hidden', flexShrink: 0 }}>
+                      <img src={post.imageUrl} alt="post" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  )}
                 </div>
-              )
-            })
-          )}
+
+                {/* Footer */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', paddingTop: '12px', borderTop: '1px solid #3d3d3d', marginTop: '12px' }}>
+                  <button onClick={e => { e.stopPropagation(); handleLike(post.id) }} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b', padding: '4px 8px', borderRadius: '4px', border: 'none', background: 'transparent', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#3d3d3d'; e.currentTarget.style.color = '#f87171' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b' }}>
+                    <Heart size={13} /> {post.likesCount}
+                  </button>
+                  <button onClick={e => { e.stopPropagation(); navigate(`/post/${post.id}`) }} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b', padding: '4px 8px', borderRadius: '4px', border: 'none', background: 'transparent', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#3d3d3d'; e.currentTarget.style.color = '#60a5fa' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b' }}>
+                    <MessageCircle size={13} /> {post.commentsCount}
+                  </button>
+                  <div style={{ flex: 1 }} />
+                  <button onClick={e => { e.stopPropagation(); handleBookmark(post.id) }} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b', padding: '4px 8px', borderRadius: '4px', border: 'none', background: 'transparent', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#3d3d3d'; e.currentTarget.style.color = '#ffa116' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b' }}>
+                    <Bookmark size={13} />
+                  </button>
+                </div>
+              </div>
+            )
+          })}
         </div>
 
-        {/* Right Panel — hidden on mobile */}
-        <div className="right-panel" style={{ width: '260px', flexShrink: 0 }}>
+        {/* Right Panel */}
+        <div className="right-panel" style={{ width: '240px', flexShrink: 0 }}>
 
-          {/* Leaderboard */}
-          <div style={{
-            background: '#0d0d18', border: '1px solid #1e293b',
-            borderRadius: '12px', padding: '16px', marginBottom: '16px'
-          }}>
-            <div style={{
-              fontSize: '11px', fontWeight: '600', color: '#475569',
-              letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '14px'
-            }}>
+          {/* Top Developers */}
+          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '14px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '12px' }}>
               Top Developers
             </div>
             {leaderboard.map((dev, i) => {
-              const avatarColor = getAvatarColor(dev.name)
+              const color = getAvatarColor(dev.name)
               return (
-                <div key={dev.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                  <div style={{ fontSize: '11px', color: '#475569', width: '16px' }}>{i + 1}</div>
-                  <div style={{
-                    width: '28px', height: '28px', borderRadius: '50%',
-                    background: avatarColor.bg, color: avatarColor.color,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '10px', fontWeight: '700', flexShrink: 0
-                  }}>
+                <div key={dev.id} onClick={() => navigate(`/profile/${dev.username}`)} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', cursor: 'pointer', padding: '4px', borderRadius: '6px' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#2d2d2d'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <div style={{ fontSize: '11px', color: '#64748b', width: '14px', flexShrink: 0 }}>{i + 1}</div>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: `${color}20`, border: `1px solid ${color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '700', color, flexShrink: 0 }}>
                     {getInitials(dev.name)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '13px', color: '#e2e8f0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {dev.name}
-                    </div>
-                    <div style={{ fontSize: '10px', color: '#475569' }}>{dev.badge}</div>
+                    <div style={{ fontSize: '12px', color: '#eff1f6', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{dev.name}</div>
+                    <div style={{ fontSize: '10px', color: '#64748b' }}>{dev.badge}</div>
                   </div>
-                  <div style={{ fontSize: '12px', color: '#00ff87', fontWeight: '600' }}>{dev.score}</div>
+                  <div style={{ fontSize: '12px', color: '#ffa116', fontWeight: '600', flexShrink: 0 }}>{dev.score}</div>
                 </div>
               )
             })}
           </div>
 
           {/* Trending Tags */}
-          <div style={{
-            background: '#0d0d18', border: '1px solid #1e293b',
-            borderRadius: '12px', padding: '16px'
-          }}>
-            <div style={{
-              fontSize: '11px', fontWeight: '600', color: '#475569',
-              letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '14px'
-            }}>
-              Trending Tags
+          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
+              <TrendingUp size={13} color='#ffa116' />
+              <span style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Trending</span>
             </div>
             {trending.map((post, i) => (
-              <div key={i} style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '8px 0',
-                borderBottom: i < trending.length - 1 ? '1px solid #1e293b' : 'none'
-              }}>
-                <span style={{ fontSize: '13px', color: '#94a3b8' }}>
-                  #{post.tags?.split(',')[0]?.trim()}
-                </span>
-                <span style={{ fontSize: '11px', color: '#475569' }}>
-                  {post.viewCount} views
-                </span>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < trending.length - 1 ? '1px solid #3d3d3d' : 'none' }}>
+                <span style={{ fontSize: '12px', color: '#94a3b8' }}>#{post.tags?.split(',')[0]?.trim()}</span>
+                <span style={{ fontSize: '11px', color: '#64748b' }}>{post.viewCount}</span>
               </div>
             ))}
           </div>

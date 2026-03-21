@@ -17,14 +17,9 @@ export default function LeaderboardPage() {
   useEffect(() => { fetchLeaderboard() }, [])
 
   const fetchLeaderboard = async () => {
-    try {
-      const res = await api.get('/api/users/leaderboard')
-      setLeaderboard(res.data.data || [])
-    } catch (err) {
-      toast.error('Failed to load leaderboard')
-    } finally {
-      setLoading(false)
-    }
+    try { const res = await api.get('/api/users/leaderboard'); setLeaderboard(res.data.data || []) }
+    catch (err) { toast.error('Failed to load leaderboard') }
+    finally { setLoading(false) }
   }
 
   const getInitials = (name) => {
@@ -33,41 +28,31 @@ export default function LeaderboardPage() {
   }
 
   const getAvatarColor = (name) => {
-    const colors = [
-      { bg: '#1e3a5f', color: '#60a5fa' },
-      { bg: '#1a2e1a', color: '#4ade80' },
-      { bg: '#2d1b4e', color: '#c084fc' },
-      { bg: '#1a1a2e', color: '#f87171' },
-      { bg: '#1a2e2e', color: '#34d399' },
-    ]
+    const colors = ['#60a5fa', '#00b8a3', '#c084fc', '#f87171', '#34d399']
     return colors[name?.charCodeAt(0) % colors.length || 0]
   }
 
   const getBadgeConfig = (badge) => {
     switch (badge) {
-      case 'LEGEND': return { bg: 'rgba(192,132,252,0.15)', color: '#c084fc', border: 'rgba(192,132,252,0.3)', emoji: '👑' }
-      case 'EXPERT': return { bg: 'rgba(96,165,250,0.15)', color: '#60a5fa', border: 'rgba(96,165,250,0.3)', emoji: '⚡' }
-      case 'INTERMEDIATE': return { bg: 'rgba(74,222,128,0.15)', color: '#4ade80', border: 'rgba(74,222,128,0.3)', emoji: '🚀' }
-      case 'BEGINNER': return { bg: 'rgba(52,211,153,0.15)', color: '#34d399', border: 'rgba(52,211,153,0.3)', emoji: '🌱' }
-      default: return { bg: 'rgba(148,163,184,0.1)', color: '#94a3b8', border: 'rgba(148,163,184,0.2)', emoji: '👋' }
+      case 'LEGEND': return { color: '#c084fc', bg: 'rgba(192,132,252,0.1)', emoji: '👑' }
+      case 'EXPERT': return { color: '#60a5fa', bg: 'rgba(96,165,250,0.1)', emoji: '⚡' }
+      case 'INTERMEDIATE': return { color: '#00b8a3', bg: 'rgba(0,184,163,0.1)', emoji: '🚀' }
+      case 'BEGINNER': return { color: '#34d399', bg: 'rgba(52,211,153,0.1)', emoji: '🌱' }
+      default: return { color: '#94a3b8', bg: '#3d3d3d', emoji: '👋' }
     }
   }
 
   const getRankConfig = (rank) => {
     switch (rank) {
-      case 1: return { medal: '🥇', color: '#FFD700', glow: 'rgba(255,215,0,0.12)', border: 'rgba(255,215,0,0.25)' }
-      case 2: return { medal: '🥈', color: '#C0C0C0', glow: 'rgba(192,192,192,0.08)', border: 'rgba(192,192,192,0.2)' }
-      case 3: return { medal: '🥉', color: '#CD7F32', glow: 'rgba(205,127,50,0.08)', border: 'rgba(205,127,50,0.2)' }
-      case 4: return { medal: '4️⃣', color: '#94a3b8', glow: 'rgba(148,163,184,0.04)', border: '#1e293b' }
-      default: return { medal: null, color: '#475569', glow: 'transparent', border: '#1e293b' }
+      case 1: return { medal: '🥇', color: '#FFD700', bg: 'rgba(255,215,0,0.05)', border: 'rgba(255,215,0,0.2)' }
+      case 2: return { medal: '🥈', color: '#C0C0C0', bg: 'rgba(192,192,192,0.05)', border: 'rgba(192,192,192,0.2)' }
+      case 3: return { medal: '🥉', color: '#CD7F32', bg: 'rgba(205,127,50,0.05)', border: 'rgba(205,127,50,0.2)' }
+      case 4: return { medal: '4️⃣', color: '#94a3b8', bg: 'transparent', border: '#3d3d3d' }
+      default: return { medal: null, color: '#64748b', bg: 'transparent', border: '#3d3d3d' }
     }
   }
 
-  if (loading) return (
-    <Layout>
-      <div style={{ textAlign: 'center', padding: '60px', color: '#475569' }}>Loading...</div>
-    </Layout>
-  )
+  if (loading) return <Layout><div style={{ textAlign: 'center', padding: '60px', color: '#64748b', fontSize: '13px' }}>Loading...</div></Layout>
 
   const top4 = leaderboard.slice(0, TOP_COUNT)
   const rest = leaderboard.slice(TOP_COUNT)
@@ -77,127 +62,60 @@ export default function LeaderboardPage() {
   return (
     <Layout>
       <div>
-
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-          <div style={{
-            width: '36px', height: '36px', borderRadius: '10px',
-            background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.2)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <Trophy size={18} color='#FFD700' />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+          <div style={{ width: '34px', height: '34px', borderRadius: '6px', background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Trophy size={17} color='#FFD700' />
           </div>
           <div>
-            <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#f1f5f9', margin: 0, letterSpacing: '-0.5px' }}>
-              Leaderboard
-            </h1>
-            <p style={{ fontSize: '12px', color: '#475569', margin: 0 }}>
-              Top developers ranked by contribution score
-            </p>
+            <h1 style={{ fontSize: '18px', fontWeight: '700', color: '#eff1f6', margin: 0 }}>Leaderboard</h1>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Top developers by contribution score</p>
           </div>
         </div>
 
-        {/* Top 4 Cards */}
+        {/* Top 4 */}
         {top4.length > 0 && (
-          <div className="leaderboard-top" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '10px', marginBottom: '16px'
-          }}>
+          <div className="leaderboard-top" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
             {top4.map((dev, i) => {
               const rank = i + 1
               const rankConfig = getRankConfig(rank)
               const avatarColor = getAvatarColor(dev.name)
               const badgeConfig = getBadgeConfig(dev.badge)
               return (
-                <div key={dev.id}
-                  onClick={() => navigate(`/profile/${dev.username}`)}
+                <div key={dev.id} onClick={() => navigate(`/profile/${dev.username}`)}
                   style={{
-                    background: `linear-gradient(160deg, ${rankConfig.glow} 0%, #0d0d18 50%)`,
-                    border: `1px solid ${rankConfig.border}`,
-                    borderRadius: '12px',
-                    padding: '12px 10px',
-                    textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s',
+                    background: rankConfig.bg || '#282828', border: `1px solid ${rankConfig.border}`,
+                    borderRadius: '8px', padding: '16px 12px', textAlign: 'center',
+                    cursor: 'pointer', transition: 'all 0.15s',
                     marginTop: rank === 1 ? '0' : rank === 2 ? '6px' : rank === 3 ? '12px' : '18px'
                   }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = 'translateY(-3px)'
-                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)'
-                    e.currentTarget.style.borderColor = rankConfig.color + '50'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = 'none'
-                    e.currentTarget.style.borderColor = rankConfig.border
-                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = rankConfig.color + '60'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = rankConfig.border; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
-                  {/* Medal */}
-                  <div style={{ fontSize: '20px', marginBottom: '6px', lineHeight: 1 }}>
-                    {rankConfig.medal}
-                  </div>
-
-                  {/* Avatar */}
-                  <div style={{
-                    width: '40px', height: '40px', borderRadius: '50%',
-                    background: avatarColor.bg, color: avatarColor.color,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '13px', fontWeight: '700', margin: '0 auto 8px',
-                    border: `2px solid ${rankConfig.color}25`
-                  }}>
+                  <div style={{ fontSize: '18px', marginBottom: '8px' }}>{rankConfig.medal}</div>
+                  {/* Square avatar like LeetCode */}
+                  <div style={{ width: '40px', height: '40px', borderRadius: '6px', background: `${avatarColor}20`, border: `1px solid ${avatarColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: '700', color: avatarColor, margin: '0 auto 8px' }}>
                     {getInitials(dev.name)}
                   </div>
-
-                  {/* Name */}
-                  <div style={{
-                    fontSize: '12px', fontWeight: '600', color: '#f1f5f9',
-                    marginBottom: '1px', whiteSpace: 'nowrap',
-                    overflow: 'hidden', textOverflow: 'ellipsis'
-                  }}>
-                    {dev.name}
-                  </div>
-                  <div style={{
-                    fontSize: '10px', color: '#475569', marginBottom: '8px',
-                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
-                  }}>
-                    @{dev.username}
-                  </div>
-
-                  {/* Score */}
-                  <div style={{
-                    fontSize: '22px', fontWeight: '800',
-                    color: rank === 1 ? '#FFD700' : '#00ff87',
-                    letterSpacing: '-1px', lineHeight: 1, marginBottom: '1px'
-                  }}>
-                    {dev.score}
-                  </div>
-                  <div style={{ fontSize: '9px', color: '#475569', marginBottom: '8px' }}>points</div>
-
-                  {/* Badge */}
-                  <span style={{
-                    fontSize: '9px', padding: '2px 6px', borderRadius: '20px', fontWeight: '600',
-                    background: badgeConfig.bg, color: badgeConfig.color, border: `1px solid ${badgeConfig.border}`
-                  }}>
-                    {badgeConfig.emoji} {dev.badge}
-                  </span>
+                  <div style={{ fontSize: '12px', fontWeight: '600', color: '#eff1f6', marginBottom: '1px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{dev.name}</div>
+                  <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>@{dev.username}</div>
+                  <div style={{ fontSize: '20px', fontWeight: '800', color: rank === 1 ? '#FFD700' : '#ffa116', letterSpacing: '-0.5px', lineHeight: 1, marginBottom: '2px' }}>{dev.score}</div>
+                  <div style={{ fontSize: '9px', color: '#64748b', marginBottom: '8px' }}>pts</div>
+                  <span style={{ fontSize: '9px', padding: '2px 6px', borderRadius: '4px', fontWeight: '600', background: badgeConfig.bg, color: badgeConfig.color }}>{badgeConfig.emoji} {dev.badge}</span>
                 </div>
               )
             })}
           </div>
         )}
 
-        {/* Rest — ranked list */}
+        {/* Rest List */}
         {rest.length > 0 && (
-          <div style={{ background: '#0d0d18', border: '1px solid #1e293b', borderRadius: '16px', overflow: 'hidden' }}>
-            <div style={{
-              padding: '12px 20px', borderBottom: '1px solid #1e293b',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-            }}>
-              <span style={{ fontSize: '12px', color: '#475569', fontWeight: '600', letterSpacing: '0.5px' }}>
-                RANKINGS #{TOP_COUNT + 1} — #{TOP_COUNT + rest.length}
+          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', overflow: 'hidden' }}>
+            <div style={{ padding: '10px 16px', borderBottom: '1px solid #3d3d3d', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', letterSpacing: '0.5px' }}>
+                RANKINGS #{TOP_COUNT + 1}–#{TOP_COUNT + rest.length}
               </span>
-              {totalPages > 1 && (
-                <span style={{ fontSize: '11px', color: '#475569' }}>Page {page + 1} of {totalPages}</span>
-              )}
+              {totalPages > 1 && <span style={{ fontSize: '11px', color: '#64748b' }}>Page {page + 1}/{totalPages}</span>}
             </div>
 
             {pagedRest.map((dev, i) => {
@@ -205,77 +123,42 @@ export default function LeaderboardPage() {
               const avatarColor = getAvatarColor(dev.name)
               const badgeConfig = getBadgeConfig(dev.badge)
               return (
-                <div key={dev.id}
-                  onClick={() => navigate(`/profile/${dev.username}`)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '14px',
-                    padding: '13px 20px', cursor: 'pointer',
-                    borderBottom: i < pagedRest.length - 1 ? '1px solid #1e293b' : 'none',
-                    transition: 'background 0.15s'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#0a0a0f'}
+                <div key={dev.id} onClick={() => navigate(`/profile/${dev.username}`)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '11px 16px', cursor: 'pointer', borderBottom: i < pagedRest.length - 1 ? '1px solid #3d3d3d' : 'none', transition: 'background 0.15s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#2d2d2d'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <div style={{ width: '32px', textAlign: 'center', flexShrink: 0, fontSize: '13px', color: '#475569', fontWeight: '600' }}>
-                    #{rank}
-                  </div>
-                  <div style={{
-                    width: '36px', height: '36px', borderRadius: '50%',
-                    background: avatarColor.bg, color: avatarColor.color,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '12px', fontWeight: '700', flexShrink: 0
-                  }}>
+                  <div style={{ width: '28px', textAlign: 'center', fontSize: '12px', color: '#64748b', fontWeight: '600', flexShrink: 0 }}>#{rank}</div>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: `${avatarColor}20`, border: `1px solid ${avatarColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '700', color: avatarColor, flexShrink: 0 }}>
                     {getInitials(dev.name)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '14px', fontWeight: '500', color: '#e2e8f0', marginBottom: '2px' }}>
-                      {dev.name}
-                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: '500', color: '#eff1f6', marginBottom: '1px' }}>{dev.name}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ fontSize: '11px', color: '#475569' }}>@{dev.username}</span>
-                      <span style={{ fontSize: '10px', padding: '1px 6px', borderRadius: '20px', fontWeight: '600', background: badgeConfig.bg, color: badgeConfig.color }}>
-                        {badgeConfig.emoji} {dev.badge}
-                      </span>
+                      <span style={{ fontSize: '11px', color: '#64748b' }}>@{dev.username}</span>
+                      <span style={{ fontSize: '10px', padding: '1px 5px', borderRadius: '4px', fontWeight: '600', background: badgeConfig.bg, color: badgeConfig.color }}>{badgeConfig.emoji} {dev.badge}</span>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: '18px', fontWeight: '700', color: '#00ff87', letterSpacing: '-0.5px' }}>{dev.score}</div>
-                    <div style={{ fontSize: '10px', color: '#475569' }}>pts</div>
+                    <div style={{ fontSize: '16px', fontWeight: '700', color: '#ffa116' }}>{dev.score}</div>
+                    <div style={{ fontSize: '10px', color: '#64748b' }}>pts</div>
                   </div>
                 </div>
               )
             })}
 
-            {/* Pagination */}
             {totalPages > 1 && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px 20px', borderTop: '1px solid #1e293b' }}>
-                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} style={{
-                  display: 'flex', alignItems: 'center', gap: '4px', padding: '7px 14px', borderRadius: '8px',
-                  background: 'transparent', border: '1px solid #1e293b',
-                  color: page === 0 ? '#334155' : '#94a3b8', fontSize: '13px',
-                  cursor: page === 0 ? 'not-allowed' : 'pointer', fontFamily: 'Inter, sans-serif'
-                }}>
-                  <ChevronLeft size={14} /> Prev
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px', borderTop: '1px solid #3d3d3d' }}>
+                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '6px 12px', borderRadius: '6px', background: 'transparent', border: '1px solid #3d3d3d', color: page === 0 ? '#3d3d3d' : '#94a3b8', fontSize: '12px', cursor: page === 0 ? 'not-allowed' : 'pointer', fontFamily: 'Inter, sans-serif' }}>
+                  <ChevronLeft size={13} /> Prev
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => (
-                  <button key={i} onClick={() => setPage(i)} style={{
-                    width: '32px', height: '32px', borderRadius: '8px',
-                    background: page === i ? '#00ff87' : 'transparent',
-                    border: `1px solid ${page === i ? '#00ff87' : '#1e293b'}`,
-                    color: page === i ? '#000' : '#94a3b8',
-                    fontSize: '13px', fontWeight: page === i ? '700' : '400',
-                    cursor: 'pointer', fontFamily: 'Inter, sans-serif'
-                  }}>
+                  <button key={i} onClick={() => setPage(i)} style={{ width: '30px', height: '30px', borderRadius: '6px', background: page === i ? '#ffa116' : 'transparent', border: `1px solid ${page === i ? '#ffa116' : '#3d3d3d'}`, color: page === i ? '#000' : '#94a3b8', fontSize: '12px', fontWeight: page === i ? '700' : '400', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>
                     {i + 1}
                   </button>
                 ))}
-                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page === totalPages - 1} style={{
-                  display: 'flex', alignItems: 'center', gap: '4px', padding: '7px 14px', borderRadius: '8px',
-                  background: 'transparent', border: '1px solid #1e293b',
-                  color: page === totalPages - 1 ? '#334155' : '#94a3b8', fontSize: '13px',
-                  cursor: page === totalPages - 1 ? 'not-allowed' : 'pointer', fontFamily: 'Inter, sans-serif'
-                }}>
-                  Next <ChevronRight size={14} />
+                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page === totalPages - 1} style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '6px 12px', borderRadius: '6px', background: 'transparent', border: '1px solid #3d3d3d', color: page === totalPages - 1 ? '#3d3d3d' : '#94a3b8', fontSize: '12px', cursor: page === totalPages - 1 ? 'not-allowed' : 'pointer', fontFamily: 'Inter, sans-serif' }}>
+                  Next <ChevronRight size={13} />
                 </button>
               </div>
             )}

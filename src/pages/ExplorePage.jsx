@@ -13,66 +13,37 @@ export default function ExplorePage() {
   const [tagLoading, setTagLoading] = useState(false)
   const navigate = useNavigate()
 
-  const popularTags = [
-    'java', 'springboot', 'jwt', 'dsa', 'backend',
-    'postgresql', 'redis', 'docker', 'react', 'api'
-  ]
+  const popularTags = ['java', 'springboot', 'jwt', 'dsa', 'backend', 'postgresql', 'redis', 'docker', 'react', 'api']
 
   useEffect(() => { fetchTrending() }, [])
 
   const fetchTrending = async () => {
-    try {
-      const res = await api.get('/api/posts/trending')
-      setTrending(res.data.data || [])
-    } catch (err) {
-      toast.error('Failed to load trending')
-    } finally {
-      setLoading(false)
-    }
+    try { const res = await api.get('/api/posts/trending'); setTrending(res.data.data || []) }
+    catch (err) { toast.error('Failed to load trending') }
+    finally { setLoading(false) }
   }
 
   const fetchByTag = async (tag) => {
-    setSelectedTag(tag)
-    setTagLoading(true)
-    try {
-      const res = await api.get(`/api/posts/tag/${tag}`)
-      setTagPosts(res.data.data || [])
-    } catch (err) {
-      toast.error('Failed to load posts')
-    } finally {
-      setTagLoading(false)
-    }
+    setSelectedTag(tag); setTagLoading(true)
+    try { const res = await api.get(`/api/posts/tag/${tag}`); setTagPosts(res.data.data || []) }
+    catch (err) { toast.error('Failed to load posts') }
+    finally { setTagLoading(false) }
   }
 
-  const getInitials = (name) => {
-    if (!name) return '?'
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-  }
+  const getInitials = (name) => { if (!name) return '?'; return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }
+  const getAvatarColor = (name) => { const c = ['#60a5fa','#00b8a3','#c084fc','#f87171','#34d399']; return c[name?.charCodeAt(0) % c.length || 0] }
 
-  const getAvatarColor = (name) => {
-    const colors = [
-      { bg: '#1e3a5f', color: '#60a5fa' },
-      { bg: '#1a2e1a', color: '#4ade80' },
-      { bg: '#2d1b4e', color: '#c084fc' },
-      { bg: '#1a1a2e', color: '#f87171' },
-      { bg: '#1a2e2e', color: '#34d399' },
-    ]
-    return colors[name?.charCodeAt(0) % colors.length || 0]
-  }
-
-  const getBadgeStyle = (type) => {
+  const getTypeStyle = (type) => {
     switch (type) {
-      case 'QUESTION': return { background: '#1e3a5f', color: '#60a5fa' }
-      case 'ARTICLE': return { background: '#1a2e1a', color: '#4ade80' }
-      case 'DISCUSSION': return { background: '#2d1b4e', color: '#c084fc' }
-      default: return { background: '#1e293b', color: '#94a3b8' }
+      case 'QUESTION': return { bg: 'rgba(96,165,250,0.1)', color: '#60a5fa', border: 'rgba(96,165,250,0.2)' }
+      case 'ARTICLE': return { bg: 'rgba(0,184,163,0.1)', color: '#00b8a3', border: 'rgba(0,184,163,0.2)' }
+      case 'DISCUSSION': return { bg: 'rgba(192,132,252,0.1)', color: '#c084fc', border: 'rgba(192,132,252,0.2)' }
+      default: return { bg: '#3d3d3d', color: '#94a3b8', border: '#3d3d3d' }
     }
   }
 
   const timeAgo = (dateStr) => {
-    const date = new Date(dateStr)
-    const now = new Date()
-    const diff = Math.floor((now - date) / 1000)
+    const diff = Math.floor((new Date() - new Date(dateStr)) / 1000)
     if (diff < 60) return 'just now'
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
@@ -80,61 +51,38 @@ export default function ExplorePage() {
   }
 
   const PostCard = ({ post }) => {
-    const avatarColor = getAvatarColor(post.authorName)
+    const color = getAvatarColor(post.authorName)
+    const typeStyle = getTypeStyle(post.postType)
     return (
       <div onClick={() => navigate(`/post/${post.id}`)}
-        style={{
-          background: '#0d0d18', border: '1px solid #1e293b',
-          borderRadius: '12px', padding: '18px',
-          cursor: 'pointer', transition: 'all 0.2s', marginBottom: '10px'
-        }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e293b'; e.currentTarget.style.transform = 'translateY(0)' }}
+        style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '16px', cursor: 'pointer', transition: 'border-color 0.15s', marginBottom: '8px' }}
+        onMouseEnter={e => e.currentTarget.style.borderColor = '#555'}
+        onMouseLeave={e => e.currentTarget.style.borderColor = '#3d3d3d'}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-          <div style={{
-            width: '30px', height: '30px', borderRadius: '50%',
-            background: avatarColor.bg, color: avatarColor.color,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '10px', fontWeight: '700', flexShrink: 0
-          }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+          <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: `${color}20`, border: `1px solid ${color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '700', color, flexShrink: 0 }}>
             {getInitials(post.authorName)}
           </div>
-          <span style={{ fontSize: '12px', color: '#64748b' }}>{post.authorName}</span>
-          <span style={{ fontSize: '11px', color: '#334155' }}>·</span>
-          <span style={{ fontSize: '11px', color: '#475569' }}>{timeAgo(post.createdAt)}</span>
-          <span style={{ marginLeft: 'auto', fontSize: '10px', padding: '2px 8px', borderRadius: '20px', fontWeight: '600', ...getBadgeStyle(post.postType) }}>
+          <span style={{ fontSize: '12px', color: '#94a3b8' }}>{post.authorName}</span>
+          <span style={{ fontSize: '11px', color: '#3d3d3d' }}>·</span>
+          <span style={{ fontSize: '11px', color: '#64748b' }}>{timeAgo(post.createdAt)}</span>
+          <span style={{ marginLeft: 'auto', fontSize: '10px', padding: '2px 7px', borderRadius: '4px', fontWeight: '600', background: typeStyle.bg, color: typeStyle.color, border: `1px solid ${typeStyle.border}` }}>
             {post.postType}
           </span>
         </div>
-        <div style={{ fontSize: '15px', fontWeight: '600', color: '#f1f5f9', marginBottom: '8px', lineHeight: '1.4' }}>
-          {post.title}
-        </div>
-        <div style={{
-          fontSize: '13px', color: '#64748b', lineHeight: '1.5', marginBottom: '12px',
-          display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
-        }}>
-          {post.content}
-        </div>
+        <div style={{ fontSize: '15px', fontWeight: '600', color: '#eff1f6', marginBottom: '6px', lineHeight: '1.4' }}>{post.title}</div>
+        <div style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.5', marginBottom: '10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{post.content}</div>
         {post.tags && (
-          <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '10px' }}>
             {post.tags.split(',').map(tag => (
-              <span key={tag} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '6px', background: '#1e293b', color: '#94a3b8' }}>
-                #{tag.trim()}
-              </span>
+              <span key={tag} style={{ fontSize: '11px', padding: '2px 6px', borderRadius: '4px', background: '#1a1a1a', color: '#64748b', border: '1px solid #3d3d3d' }}>{tag.trim()}</span>
             ))}
           </div>
         )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingTop: '10px', borderTop: '1px solid #1e293b' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#475569' }}>
-            <Heart size={12} /> {post.likesCount}
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#475569' }}>
-            <MessageCircle size={12} /> {post.commentsCount}
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#475569' }}>
-            <Eye size={12} /> {post.viewCount}
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', paddingTop: '10px', borderTop: '1px solid #3d3d3d' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b' }}><Heart size={12} /> {post.likesCount}</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b' }}><MessageCircle size={12} /> {post.commentsCount}</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b' }}><Eye size={12} /> {post.viewCount}</span>
         </div>
       </div>
     )
@@ -142,89 +90,57 @@ export default function ExplorePage() {
 
   return (
     <Layout>
-      {/* explore-layout stacks on mobile */}
-      <div className="explore-layout" style={{ display: 'flex', gap: '24px' }}>
+      <div className="explore-layout" style={{ display: 'flex', gap: '20px' }}>
 
-        {/* Main Content */}
+        {/* Main */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ marginBottom: '20px' }}>
-            <h1 style={{ fontSize: '22px', fontWeight: '700', color: '#f1f5f9', margin: '0 0 4px', letterSpacing: '-0.5px' }}>
-              Explore
-            </h1>
-            <p style={{ fontSize: '13px', color: '#475569', margin: 0 }}>
+          <div style={{ marginBottom: '16px' }}>
+            <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#eff1f6', margin: 0 }}>Explore</h1>
+            <p style={{ fontSize: '13px', color: '#64748b', margin: '3px 0 0' }}>
               {selectedTag ? `Posts tagged #${selectedTag}` : 'Trending posts right now'}
             </p>
           </div>
 
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: '#475569' }}>Loading...</div>
-          ) : tagLoading ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: '#475569' }}>Loading posts...</div>
-          ) : selectedTag ? (
-            tagPosts.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px', background: '#0d0d18', borderRadius: '12px', border: '1px solid #1e293b', color: '#475569', fontSize: '13px' }}>
-                No posts found for #{selectedTag}
-              </div>
-            ) : tagPosts.map(post => <PostCard key={post.id} post={post} />)
-          ) : (
-            trending.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px', background: '#0d0d18', borderRadius: '12px', border: '1px solid #1e293b', color: '#475569', fontSize: '13px' }}>
-                No trending posts yet
-              </div>
-            ) : trending.map(post => <PostCard key={post.id} post={post} />)
-          )}
+          {loading ? <div style={{ textAlign: 'center', padding: '60px', color: '#64748b', fontSize: '13px' }}>Loading...</div>
+            : tagLoading ? <div style={{ textAlign: 'center', padding: '60px', color: '#64748b', fontSize: '13px' }}>Loading posts...</div>
+            : selectedTag ? (
+              tagPosts.length === 0
+                ? <div style={{ textAlign: 'center', padding: '48px', background: '#282828', borderRadius: '8px', border: '1px solid #3d3d3d', color: '#64748b', fontSize: '13px' }}>No posts found for #{selectedTag}</div>
+                : tagPosts.map(post => <PostCard key={post.id} post={post} />)
+            ) : (
+              trending.length === 0
+                ? <div style={{ textAlign: 'center', padding: '48px', background: '#282828', borderRadius: '8px', border: '1px solid #3d3d3d', color: '#64748b', fontSize: '13px' }}>No trending posts yet</div>
+                : trending.map(post => <PostCard key={post.id} post={post} />)
+            )}
         </div>
 
         {/* Right Panel */}
-        <div className="explore-right" style={{ width: '260px', flexShrink: 0 }}>
+        <div className="explore-right" style={{ width: '240px', flexShrink: 0 }}>
 
           {/* Trending Now */}
-          <div style={{ background: '#0d0d18', border: '1px solid #1e293b', borderRadius: '12px', overflow: 'hidden', marginBottom: '16px' }}>
-            <div style={{ padding: '14px 16px', borderBottom: '1px solid #1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <TrendingUp size={14} color='#00ff87' />
-              <span style={{ fontSize: '12px', fontWeight: '600', color: '#e2e8f0' }}>Trending Now</span>
+          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+            <div style={{ padding: '12px 14px', borderBottom: '1px solid #3d3d3d', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <TrendingUp size={13} color='#ffa116' />
+              <span style={{ fontSize: '12px', fontWeight: '600', color: '#eff1f6' }}>Trending Now</span>
             </div>
-            <div style={{ padding: '8px' }}>
+            <div style={{ padding: '6px' }}>
               {trending.slice(0, 5).map((post, i) => (
                 <div key={post.id} onClick={() => navigate(`/post/${post.id}`)}
-                  style={{
-                    padding: '10px 8px', borderRadius: '8px', cursor: 'pointer',
-                    marginBottom: '4px', transition: 'background 0.15s',
-                    borderBottom: i < 4 ? '1px solid #1e293b' : 'none'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#0a0a0f'}
+                  style={{ padding: '8px', borderRadius: '6px', cursor: 'pointer', marginBottom: '2px', transition: 'background 0.15s', borderBottom: i < 4 ? '1px solid #3d3d3d' : 'none' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#2d2d2d'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                    <div style={{
-                      width: '22px', height: '22px', borderRadius: '6px',
-                      background: i === 0 ? 'rgba(255,215,0,0.1)' : '#1e293b',
-                      border: `1px solid ${i === 0 ? 'rgba(255,215,0,0.3)' : '#334155'}`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '11px', fontWeight: '700', flexShrink: 0,
-                      color: i === 0 ? '#FFD700' : '#475569'
-                    }}>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: i === 0 ? 'rgba(255,215,0,0.1)' : '#3d3d3d', border: `1px solid ${i === 0 ? 'rgba(255,215,0,0.3)' : '#555'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', flexShrink: 0, color: i === 0 ? '#FFD700' : '#64748b' }}>
                       {i + 1}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{
-                        fontSize: '13px', color: '#e2e8f0', lineHeight: '1.4',
-                        marginBottom: '6px', fontWeight: '500',
-                        display: '-webkit-box', WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical', overflow: 'hidden'
-                      }}>
+                      <div style={{ fontSize: '12px', color: '#eff1f6', lineHeight: '1.4', marginBottom: '4px', fontWeight: '500', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                         {post.title}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#f87171' }}>
-                          <Heart size={11} /> {post.likesCount}
-                        </span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#475569' }}>
-                          <Eye size={11} /> {post.viewCount}
-                        </span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#475569' }}>
-                          <MessageCircle size={11} /> {post.commentsCount}
-                        </span>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', color: '#f87171' }}><Heart size={10} /> {post.likesCount}</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', color: '#64748b' }}><Eye size={10} /> {post.viewCount}</span>
                       </div>
                     </div>
                   </div>
@@ -234,32 +150,28 @@ export default function ExplorePage() {
           </div>
 
           {/* Popular Tags */}
-          <div style={{ background: '#0d0d18', border: '1px solid #1e293b', borderRadius: '12px', overflow: 'hidden' }}>
-            <div style={{ padding: '14px 16px', borderBottom: '1px solid #1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Hash size={14} color='#94a3b8' />
-              <span style={{ fontSize: '12px', fontWeight: '600', color: '#e2e8f0' }}>Popular Tags</span>
+          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', overflow: 'hidden' }}>
+            <div style={{ padding: '12px 14px', borderBottom: '1px solid #3d3d3d', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Hash size={13} color='#94a3b8' />
+              <span style={{ fontSize: '12px', fontWeight: '600', color: '#eff1f6' }}>Popular Tags</span>
             </div>
-            <div style={{ padding: '12px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            <div style={{ padding: '10px', display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
               {popularTags.map(tag => (
                 <button key={tag} onClick={() => fetchByTag(tag)} style={{
-                  padding: '5px 12px', borderRadius: '20px', cursor: 'pointer',
-                  background: selectedTag === tag ? 'rgba(0,255,135,0.1)' : '#1e293b',
-                  border: `1px solid ${selectedTag === tag ? 'rgba(0,255,135,0.3)' : '#334155'}`,
-                  color: selectedTag === tag ? '#00ff87' : '#94a3b8',
-                  fontSize: '12px', fontFamily: 'Inter, sans-serif', transition: 'all 0.15s'
+                  padding: '4px 10px', borderRadius: '4px', cursor: 'pointer',
+                  background: selectedTag === tag ? 'rgba(255,161,22,0.1)' : '#1a1a1a',
+                  border: `1px solid ${selectedTag === tag ? 'rgba(255,161,22,0.3)' : '#3d3d3d'}`,
+                  color: selectedTag === tag ? '#ffa116' : '#64748b',
+                  fontSize: '11px', fontFamily: 'Inter, sans-serif', transition: 'all 0.15s'
                 }}
-                  onMouseEnter={e => { if (selectedTag !== tag) { e.currentTarget.style.borderColor = '#00ff87'; e.currentTarget.style.color = '#00ff87' } }}
-                  onMouseLeave={e => { if (selectedTag !== tag) { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.color = '#94a3b8' } }}
+                  onMouseEnter={e => { if (selectedTag !== tag) { e.currentTarget.style.borderColor = '#ffa116'; e.currentTarget.style.color = '#ffa116' } }}
+                  onMouseLeave={e => { if (selectedTag !== tag) { e.currentTarget.style.borderColor = '#3d3d3d'; e.currentTarget.style.color = '#64748b' } }}
                 >
                   #{tag}
                 </button>
               ))}
               {selectedTag && (
-                <button onClick={() => { setSelectedTag(null); setTagPosts([]) }} style={{
-                  padding: '5px 12px', borderRadius: '20px', cursor: 'pointer',
-                  background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)',
-                  color: '#f87171', fontSize: '12px', fontFamily: 'Inter, sans-serif'
-                }}>
+                <button onClick={() => { setSelectedTag(null); setTagPosts([]) }} style={{ padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', fontSize: '11px', fontFamily: 'Inter, sans-serif' }}>
                   ✕ Clear
                 </button>
               )}

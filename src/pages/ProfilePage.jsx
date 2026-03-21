@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
-import { Github, Linkedin, Edit, ArrowLeft, Heart, MessageCircle, TrendingUp } from 'lucide-react'
+import { Github, Linkedin, Edit, Heart, MessageCircle, TrendingUp, MapPin } from 'lucide-react'
 import api from '../services/api'
 import Layout from '../components/layout/Layout'
 
@@ -15,81 +15,58 @@ export default function ProfilePage() {
   const [scoreHistory, setScoreHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [following, setFollowing] = useState(false)
+  const [activeTab, setActiveTab] = useState('posts')
 
   const isOwnProfile = user?.username === username
 
   useEffect(() => {
-    if (user) {
-      fetchProfile()
-      fetchUserPosts()
-      if (isOwnProfile) fetchScoreHistory()
-    }
+    if (user) { fetchProfile(); fetchUserPosts(); if (isOwnProfile) fetchScoreHistory() }
   }, [username, user])
 
   const fetchProfile = async () => {
-    try {
-      const res = await api.get(`/api/users/${username}`)
-      setProfile(res.data.data)
-    } catch (err) {
-      toast.error('User not found')
-      navigate('/feed')
-    } finally {
-      setLoading(false)
-    }
+    try { const res = await api.get(`/api/users/${username}`); setProfile(res.data.data) }
+    catch (err) { toast.error('User not found'); navigate('/feed') }
+    finally { setLoading(false) }
   }
 
   const fetchUserPosts = async () => {
-    try {
-      const res = await api.get(`/api/posts/user/${username}`)
-      setPosts(res.data.data || [])
-    } catch (err) {}
+    try { const res = await api.get(`/api/posts/user/${username}`); setPosts(res.data.data || []) } catch (err) {}
   }
 
   const fetchScoreHistory = async () => {
-    try {
-      const res = await api.get('/api/users/score-history')
-      setScoreHistory(res.data.data || [])
-    } catch (err) {}
+    try { const res = await api.get('/api/users/score-history'); setScoreHistory(res.data.data || []) } catch (err) {}
   }
 
   const handleFollow = async () => {
     try {
-      if (following) {
-        await api.delete(`/api/follow/${profile.id}`)
-        setFollowing(false)
-        toast.success('Unfollowed!')
-      } else {
-        await api.post(`/api/follow/${profile.id}`)
-        setFollowing(true)
-        toast.success('Now following!')
-      }
+      if (following) { await api.delete(`/api/follow/${profile.id}`); setFollowing(false); toast.success('Unfollowed!') }
+      else { await api.post(`/api/follow/${profile.id}`); setFollowing(true); toast.success('Following!') }
       fetchProfile()
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Error')
-    }
+    } catch (err) { toast.error(err.response?.data?.message || 'Error') }
   }
 
   const handleLike = async (e, postId) => {
     e.stopPropagation()
-    try {
-      await api.post(`/api/likes/${postId}`)
-      fetchUserPosts()
-      toast.success('Liked!')
-    } catch (err) {
-      if (err.response?.status === 400) {
-        await api.delete(`/api/likes/${postId}`)
-        fetchUserPosts()
-      }
-    }
+    try { await api.post(`/api/likes/${postId}`); fetchUserPosts(); toast.success('Liked!') }
+    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/likes/${postId}`); fetchUserPosts() } }
   }
 
   const getBadgeConfig = (badge) => {
     switch (badge) {
-      case 'LEGEND': return { bg: 'rgba(192,132,252,0.15)', color: '#c084fc', border: 'rgba(192,132,252,0.3)', emoji: '👑' }
-      case 'EXPERT': return { bg: 'rgba(96,165,250,0.15)', color: '#60a5fa', border: 'rgba(96,165,250,0.3)', emoji: '⚡' }
-      case 'INTERMEDIATE': return { bg: 'rgba(74,222,128,0.15)', color: '#4ade80', border: 'rgba(74,222,128,0.3)', emoji: '🚀' }
-      case 'BEGINNER': return { bg: 'rgba(52,211,153,0.15)', color: '#34d399', border: 'rgba(52,211,153,0.3)', emoji: '🌱' }
-      default: return { bg: 'rgba(148,163,184,0.1)', color: '#94a3b8', border: 'rgba(148,163,184,0.2)', emoji: '👋' }
+      case 'LEGEND': return { color: '#c084fc', bg: 'rgba(192,132,252,0.1)', border: 'rgba(192,132,252,0.2)', emoji: '👑' }
+      case 'EXPERT': return { color: '#60a5fa', bg: 'rgba(96,165,250,0.1)', border: 'rgba(96,165,250,0.2)', emoji: '⚡' }
+      case 'INTERMEDIATE': return { color: '#00b8a3', bg: 'rgba(0,184,163,0.1)', border: 'rgba(0,184,163,0.2)', emoji: '🚀' }
+      case 'BEGINNER': return { color: '#34d399', bg: 'rgba(52,211,153,0.1)', border: 'rgba(52,211,153,0.2)', emoji: '🌱' }
+      default: return { color: '#94a3b8', bg: '#3d3d3d', border: '#555', emoji: '👋' }
+    }
+  }
+
+  const getTypeStyle = (type) => {
+    switch (type) {
+      case 'QUESTION': return { bg: 'rgba(96,165,250,0.1)', color: '#60a5fa', border: 'rgba(96,165,250,0.2)' }
+      case 'ARTICLE': return { bg: 'rgba(0,184,163,0.1)', color: '#00b8a3', border: 'rgba(0,184,163,0.2)' }
+      case 'DISCUSSION': return { bg: 'rgba(192,132,252,0.1)', color: '#c084fc', border: 'rgba(192,132,252,0.2)' }
+      default: return { bg: '#3d3d3d', color: '#94a3b8', border: '#3d3d3d' }
     }
   }
 
@@ -98,281 +75,238 @@ export default function ProfilePage() {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
   }
 
-  const getBadgeStyle = (type) => {
-    switch (type) {
-      case 'QUESTION': return { background: '#1e3a5f', color: '#60a5fa' }
-      case 'ARTICLE': return { background: '#1a2e1a', color: '#4ade80' }
-      case 'DISCUSSION': return { background: '#2d1b4e', color: '#c084fc' }
-      default: return { background: '#1e293b', color: '#94a3b8' }
-    }
+  const getAvatarColor = (name) => {
+    const colors = ['#60a5fa', '#00b8a3', '#c084fc', '#f87171', '#34d399']
+    return colors[name?.charCodeAt(0) % colors.length || 0]
   }
 
   const timeAgo = (dateStr) => {
-    const date = new Date(dateStr)
-    const now = new Date()
-    const diff = Math.floor((now - date) / 1000)
+    const diff = Math.floor((new Date() - new Date(dateStr)) / 1000)
     if (diff < 60) return 'just now'
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
     return `${Math.floor(diff / 86400)}d ago`
   }
 
-  if (loading) return (
-    <Layout>
-      <div style={{ textAlign: 'center', padding: '60px', color: '#475569' }}>Loading...</div>
-    </Layout>
-  )
-
+  if (loading) return <Layout><div style={{ textAlign: 'center', padding: '60px', color: '#64748b' }}>Loading...</div></Layout>
   if (!profile) return null
 
   const badgeConfig = getBadgeConfig(profile.badge)
+  const avatarColor = getAvatarColor(profile.name)
 
   return (
     <Layout>
-      {/* Back */}
-      <button onClick={() => navigate(-1)} style={{
-        display: 'flex', alignItems: 'center', gap: '6px',
-        color: '#475569', fontSize: '13px', background: 'transparent',
-        border: 'none', cursor: 'pointer', marginBottom: '20px',
-        fontFamily: 'Inter, sans-serif', padding: 0
-      }}
-        onMouseEnter={e => e.currentTarget.style.color = '#e2e8f0'}
-        onMouseLeave={e => e.currentTarget.style.color = '#475569'}
-      >
-        <ArrowLeft size={15} /> Back
-      </button>
+      <div className="profile-top-row" style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', marginBottom: '16px' }}>
 
-      {/* TOP ROW — stacks on mobile */}
-      <div className="profile-top-row" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', marginBottom: '16px' }}>
+        {/* Left — Profile Card */}
+        <div style={{ width: '260px', flexShrink: 0 }}>
+          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '20px', textAlign: 'center' }}>
 
-        {/* Profile Card */}
-        <div style={{
-          flex: 1, minWidth: 0,
-          background: '#0d0d18', border: '1px solid #1e293b',
-          borderRadius: '16px', overflow: 'visible'
-        }}>
-          {/* Banner */}
-          <div style={{
-            height: '110px', position: 'relative',
-            overflow: 'hidden', borderRadius: '16px 16px 0 0',
-            background: '#060608'
-          }}>
-            <div style={{ position: 'absolute', top: '-50px', left: '-30px', width: '200px', height: '200px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,255,135,0.18) 0%, transparent 70%)', filter: 'blur(35px)', pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', top: '-30px', right: '60px', width: '160px', height: '160px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(96,165,250,0.12) 0%, transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', bottom: '-30px', right: '-20px', width: '180px', height: '180px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(192,132,252,0.12) 0%, transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none' }} />
-          </div>
-
-          {/* Avatar row */}
-          <div style={{ padding: '0 24px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: '-42px', marginBottom: '16px' }}>
-              <div style={{
-                width: '84px', height: '84px', borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(0,255,135,0.2), rgba(0,255,135,0.05))',
-                border: '4px solid #0d0d18', outline: '1px solid rgba(0,255,135,0.25)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '28px', fontWeight: '800', color: '#00ff87',
-                flexShrink: 0, zIndex: 10, overflow: 'hidden', position: 'relative'
-              }}>
-                {profile.avatarUrl ? (
-                  <img src={profile.avatarUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : getInitials(profile.name)}
-              </div>
-              <div style={{ paddingBottom: '4px' }}>
-                {isOwnProfile ? (
-                  <button onClick={() => navigate('/settings')} style={{
-                    display: 'flex', alignItems: 'center', gap: '5px', padding: '7px 13px',
-                    borderRadius: '8px', background: 'transparent', border: '1px solid #1e293b',
-                    color: '#94a3b8', fontSize: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif'
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.color = '#e2e8f0' }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e293b'; e.currentTarget.style.color = '#94a3b8' }}
-                  >
-                    <Edit size={12} /> Edit
-                  </button>
-                ) : (
-                  <button onClick={handleFollow} style={{
-                    padding: '7px 18px', borderRadius: '8px',
-                    background: following ? 'transparent' : '#00ff87',
-                    border: following ? '1px solid #1e293b' : 'none',
-                    color: following ? '#94a3b8' : '#000',
-                    fontSize: '12px', fontWeight: '700', cursor: 'pointer', fontFamily: 'Inter, sans-serif'
-                  }}>
-                    {following ? 'Following ✓' : '+ Follow'}
-                  </button>
-                )}
-              </div>
+            {/* Avatar — LeetCode square style */}
+            <div style={{
+              width: '80px', height: '80px', borderRadius: '8px',
+              background: `${avatarColor}20`,
+              border: `2px solid ${avatarColor}40`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '26px', fontWeight: '800', color: avatarColor,
+              margin: '0 auto 14px', overflow: 'hidden'
+            }}>
+              {profile.avatarUrl ? (
+                <img src={profile.avatarUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : getInitials(profile.name)}
             </div>
 
-            <div style={{ marginBottom: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '3px' }}>
-                <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#f1f5f9', margin: 0, letterSpacing: '-0.5px' }}>
-                  {profile.name}
-                </h1>
-                <span style={{ fontSize: '10px', padding: '2px 8px', borderRadius: '20px', fontWeight: '600', background: badgeConfig.bg, color: badgeConfig.color, border: `1px solid ${badgeConfig.border}` }}>
-                  {badgeConfig.emoji} {profile.badge}
-                </span>
-              </div>
-              <div style={{ fontSize: '13px', color: '#475569' }}>@{profile.username}</div>
+            {/* Name */}
+            <div style={{ fontSize: '17px', fontWeight: '700', color: '#eff1f6', marginBottom: '2px' }}>{profile.name}</div>
+            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '10px' }}>@{profile.username}</div>
+
+            {/* Badge */}
+            <span style={{ fontSize: '11px', padding: '3px 10px', borderRadius: '4px', fontWeight: '600', background: badgeConfig.bg, color: badgeConfig.color, border: `1px solid ${badgeConfig.border}`, display: 'inline-block', marginBottom: '14px' }}>
+              {badgeConfig.emoji} {profile.badge}
+            </span>
+
+            {/* Action Button */}
+            <div style={{ marginBottom: '16px' }}>
+              {isOwnProfile ? (
+                <button onClick={() => navigate('/settings')} style={{
+                  width: '100%', padding: '7px', borderRadius: '6px',
+                  background: 'transparent', border: '1px solid #3d3d3d',
+                  color: '#94a3b8', fontSize: '13px', cursor: 'pointer',
+                  fontFamily: 'Inter, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#555'; e.currentTarget.style.color = '#eff1f6' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#3d3d3d'; e.currentTarget.style.color = '#94a3b8' }}
+                >
+                  <Edit size={13} /> Edit Profile
+                </button>
+              ) : (
+                <button onClick={handleFollow} style={{
+                  width: '100%', padding: '7px', borderRadius: '6px',
+                  background: following ? 'transparent' : '#ffa116',
+                  border: following ? '1px solid #3d3d3d' : 'none',
+                  color: following ? '#94a3b8' : '#000',
+                  fontSize: '13px', fontWeight: '600', cursor: 'pointer', fontFamily: 'Inter, sans-serif'
+                }}>
+                  {following ? 'Following ✓' : '+ Follow'}
+                </button>
+              )}
             </div>
 
-            {profile.bio && (
-              <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6', marginBottom: '12px' }}>
-                {profile.bio}
-              </p>
-            )}
+            {/* Divider */}
+            <div style={{ height: '1px', background: '#3d3d3d', marginBottom: '14px' }} />
 
+            {/* Bio */}
+            {profile.bio && <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6', marginBottom: '12px', textAlign: 'left' }}>{profile.bio}</p>}
+
+            {/* Skills */}
             {profile.skills && (
-              <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '12px', justifyContent: 'flex-start' }}>
                 {profile.skills.split(',').map(skill => (
-                  <span key={skill} style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '20px', background: '#1e293b', color: '#94a3b8', border: '1px solid #334155' }}>
+                  <span key={skill} style={{ fontSize: '11px', padding: '2px 7px', borderRadius: '4px', background: '#1a1a1a', color: '#64748b', border: '1px solid #3d3d3d' }}>
                     {skill.trim()}
                   </span>
                 ))}
               </div>
             )}
 
+            {/* Links */}
             {(profile.githubUrl || profile.linkedinUrl) && (
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {profile.githubUrl && (
-                  <a href={profile.githubUrl} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#64748b', textDecoration: 'none', padding: '5px 10px', borderRadius: '7px', background: '#0a0a0f', border: '1px solid #1e293b' }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.color = '#e2e8f0' }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e293b'; e.currentTarget.style.color = '#64748b' }}
+                  <a href={profile.githubUrl} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#64748b', textDecoration: 'none' }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#eff1f6'}
+                    onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
                   >
-                    <Github size={13} /> GitHub
+                    <Github size={13} /> {profile.githubUrl.replace('https://', '')}
                   </a>
                 )}
                 {profile.linkedinUrl && (
-                  <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#64748b', textDecoration: 'none', padding: '5px 10px', borderRadius: '7px', background: '#0a0a0f', border: '1px solid #1e293b' }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.color = '#60a5fa' }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e293b'; e.currentTarget.style.color = '#64748b' }}
+                  <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#64748b', textDecoration: 'none' }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#60a5fa'}
+                    onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
                   >
                     <Linkedin size={13} /> LinkedIn
                   </a>
                 )}
               </div>
             )}
+          </div>
 
-            {/* Stats */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: '#1e293b', borderRadius: '10px', overflow: 'hidden', border: '1px solid #1e293b', marginBottom: '20px' }}>
-              {[
-                { label: 'Score', value: profile.score, color: '#00ff87', highlight: true },
-                { label: 'Posts', value: posts.length, color: '#e2e8f0' },
-                { label: 'Followers', value: profile.followersCount, color: '#e2e8f0' },
-                { label: 'Following', value: profile.followingCount, color: '#e2e8f0' },
-              ].map(stat => (
-                <div key={stat.label} style={{ textAlign: 'center', padding: '12px 8px', background: stat.highlight ? 'rgba(0,255,135,0.06)' : '#0d0d18' }}>
-                  <div style={{ fontSize: '20px', fontWeight: '700', color: stat.color, letterSpacing: '-0.5px', lineHeight: 1 }}>{stat.value}</div>
-                  <div style={{ fontSize: '10px', color: '#475569', marginTop: '3px' }}>{stat.label}</div>
-                </div>
-              ))}
-            </div>
+          {/* Stats */}
+          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '14px', marginTop: '10px' }}>
+            {[
+              { label: 'Score', value: profile.score, color: '#ffa116' },
+              { label: 'Posts', value: posts.length, color: '#eff1f6' },
+              { label: 'Followers', value: profile.followersCount, color: '#eff1f6' },
+              { label: 'Following', value: profile.followingCount, color: '#eff1f6' },
+            ].map((stat, i) => (
+              <div key={stat.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < 3 ? '1px solid #3d3d3d' : 'none' }}>
+                <span style={{ fontSize: '13px', color: '#64748b' }}>{stat.label}</span>
+                <span style={{ fontSize: '14px', fontWeight: '700', color: stat.color }}>{stat.value}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Score History — hidden on mobile */}
-        {isOwnProfile && (
-          <div className="score-history-panel" style={{ width: '280px', flexShrink: 0, background: '#0d0d18', border: '1px solid #1e293b', borderRadius: '16px', overflow: 'hidden' }}>
-            <div style={{ padding: '14px 16px', borderBottom: '1px solid #1e293b', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <TrendingUp size={14} color='#00ff87' />
-                <span style={{ fontSize: '13px', fontWeight: '600', color: '#e2e8f0' }}>Score History</span>
+        {/* Right — Posts + Score History */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+
+          {/* Tabs */}
+          <div style={{ display: 'flex', gap: '2px', marginBottom: '14px', background: '#282828', padding: '4px', borderRadius: '8px', border: '1px solid #3d3d3d' }}>
+            {[{ key: 'posts', label: `Posts (${posts.length})` }, ...(isOwnProfile ? [{ key: 'score', label: 'Score History' }] : [])].map(tab => (
+              <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+                flex: 1, padding: '7px', borderRadius: '6px', border: 'none', cursor: 'pointer',
+                fontSize: '13px', fontWeight: activeTab === tab.key ? '600' : '400',
+                background: activeTab === tab.key ? '#3d3d3d' : 'transparent',
+                color: activeTab === tab.key ? '#eff1f6' : '#64748b',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === 'posts' && (
+            posts.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '48px', background: '#282828', borderRadius: '8px', border: '1px solid #3d3d3d', color: '#64748b', fontSize: '13px' }}>
+                <div style={{ fontSize: '28px', marginBottom: '10px' }}>📝</div>
+                No posts yet
+                {isOwnProfile && <div style={{ marginTop: '12px' }}><button onClick={() => navigate('/create-post')} style={{ padding: '7px 16px', borderRadius: '6px', background: '#ffa116', color: '#000', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '600', fontFamily: 'Inter, sans-serif' }}>Create Post</button></div>}
               </div>
-              <span style={{ fontSize: '10px', color: '#475569' }}>{scoreHistory.length} events</span>
-            </div>
-            <div style={{ margin: '10px 10px 0', padding: '12px 14px', background: 'rgba(0,255,135,0.06)', borderRadius: '10px', border: '1px solid rgba(0,255,135,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ fontSize: '10px', color: '#475569', marginBottom: '2px' }}>Total Score</div>
-                <div style={{ fontSize: '26px', fontWeight: '800', color: '#00ff87', letterSpacing: '-1px', lineHeight: 1 }}>{profile.score}</div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '10px' }}>
+                {posts.map(post => {
+                  const typeStyle = getTypeStyle(post.postType)
+                  return (
+                    <div key={post.id} onClick={() => navigate(`/post/${post.id}`)}
+                      style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '14px', cursor: 'pointer', transition: 'border-color 0.15s' }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = '#555'}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = '#3d3d3d'}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: '600', background: typeStyle.bg, color: typeStyle.color, border: `1px solid ${typeStyle.border}` }}>{post.postType}</span>
+                        <span style={{ fontSize: '11px', color: '#64748b' }}>{timeAgo(post.createdAt)}</span>
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#eff1f6', marginBottom: '6px', lineHeight: '1.4' }}>{post.title}</div>
+                      <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5', marginBottom: '10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{post.content}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingTop: '10px', borderTop: '1px solid #3d3d3d' }}>
+                        <button onClick={e => handleLike(e, post.id)} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b', background: 'transparent', border: 'none', cursor: 'pointer', padding: '2px 6px', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = '#3d3d3d'; e.currentTarget.style.color = '#f87171' }}
+                          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b' }}
+                        >
+                          <Heart size={12} /> {post.likesCount}
+                        </button>
+                        <button onClick={e => { e.stopPropagation(); navigate(`/post/${post.id}`) }} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b', background: 'transparent', border: 'none', cursor: 'pointer', padding: '2px 6px', borderRadius: '4px', fontFamily: 'Inter, sans-serif' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = '#3d3d3d'; e.currentTarget.style.color = '#60a5fa' }}
+                          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b' }}
+                        >
+                          <MessageCircle size={12} /> {post.commentsCount}
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-              <span style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '20px', fontWeight: '600', background: badgeConfig.bg, color: badgeConfig.color, border: `1px solid ${badgeConfig.border}` }}>
-                {badgeConfig.emoji} {profile.badge}
-              </span>
-            </div>
-            <div style={{ padding: '10px', maxHeight: '280px', overflowY: 'auto' }}>
+            )
+          )}
+
+          {activeTab === 'score' && isOwnProfile && (
+            <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', overflow: 'hidden' }}>
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid #3d3d3d', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <TrendingUp size={14} color='#ffa116' />
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#eff1f6' }}>Score History</span>
+                </div>
+                <span style={{ fontSize: '20px', fontWeight: '800', color: '#ffa116' }}>{profile.score} pts</span>
+              </div>
               {scoreHistory.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '24px 0', color: '#475569', fontSize: '12px' }}>No activity yet</div>
+                <div style={{ textAlign: 'center', padding: '32px', color: '#64748b', fontSize: '13px' }}>No activity yet</div>
               ) : scoreHistory.map(item => (
-                <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '7px 6px', borderRadius: '7px', marginBottom: '3px', transition: 'background 0.15s', cursor: 'default' }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#0a0a0f'}
+                <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', borderBottom: '1px solid #3d3d3d', transition: 'background 0.15s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#2d2d2d'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', flexShrink: 0, background: item.points > 0 ? 'rgba(0,255,135,0.1)' : 'rgba(248,113,113,0.1)', border: `1px solid ${item.points > 0 ? 'rgba(0,255,135,0.2)' : 'rgba(248,113,113,0.2)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700', color: item.points > 0 ? '#00ff87' : '#f87171' }}>
+                  <div style={{
+                    width: '36px', height: '36px', borderRadius: '6px', flexShrink: 0,
+                    background: item.points > 0 ? 'rgba(255,161,22,0.1)' : 'rgba(239,68,68,0.1)',
+                    border: `1px solid ${item.points > 0 ? 'rgba(255,161,22,0.2)' : 'rgba(239,68,68,0.2)'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '12px', fontWeight: '700',
+                    color: item.points > 0 ? '#ffa116' : '#ef4444'
+                  }}>
                     {item.points > 0 ? '+' : ''}{item.points}
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.reason}</div>
-                    <div style={{ fontSize: '10px', color: '#475569' }}>{new Date(item.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '13px', color: '#94a3b8' }}>{item.reason}</div>
+                    <div style={{ fontSize: '11px', color: '#64748b' }}>{new Date(item.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                   </div>
-                  <div style={{ fontSize: '14px', color: item.points > 0 ? 'rgba(0,255,135,0.4)' : 'rgba(248,113,113,0.4)', flexShrink: 0 }}>
+                  <div style={{ fontSize: '14px', color: item.points > 0 ? 'rgba(255,161,22,0.5)' : 'rgba(239,68,68,0.5)' }}>
                     {item.points > 0 ? '↑' : '↓'}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-        )}
-      </div>
-
-      {/* BOTTOM ROW — Posts */}
-      <div style={{ background: '#0d0d18', border: '1px solid #1e293b', borderRadius: '12px', overflow: 'hidden' }}>
-        <div style={{ padding: '14px 20px', borderBottom: '1px solid #1e293b', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h2 style={{ fontSize: '14px', fontWeight: '600', color: '#f1f5f9', margin: 0 }}>
-            Posts <span style={{ marginLeft: '6px', fontSize: '12px', color: '#475569', fontWeight: '400' }}>{posts.length}</span>
-          </h2>
-          {isOwnProfile && (
-            <button onClick={() => navigate('/create-post')} style={{ padding: '6px 14px', borderRadius: '7px', border: 'none', background: '#00ff87', color: '#000', fontSize: '12px', fontWeight: '700', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>
-              + New Post
-            </button>
           )}
-        </div>
-        <div className="posts-grid" style={{ padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
-          {posts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#475569', fontSize: '13px', gridColumn: '1/-1' }}>
-              <div style={{ fontSize: '28px', marginBottom: '10px' }}>📝</div>
-              No posts yet
-            </div>
-          ) : posts.map((post) => {
-            const badgeStyle = getBadgeStyle(post.postType)
-            const typeGlow = { QUESTION: 'rgba(96,165,250,0.06)', ARTICLE: 'rgba(74,222,128,0.06)', DISCUSSION: 'rgba(192,132,252,0.06)' }
-            return (
-              <div key={post.id} onClick={() => navigate(`/post/${post.id}`)}
-                style={{ background: typeGlow[post.postType] || '#0a0a0f', border: '1px solid #1e293b', borderRadius: '12px', padding: '16px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative', overflow: 'hidden' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#334155'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e293b'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
-              >
-                <div style={{ position: 'absolute', top: 0, right: 0, width: '60px', height: '60px', background: `radial-gradient(circle at top right, ${post.postType === 'QUESTION' ? 'rgba(96,165,250,0.08)' : post.postType === 'ARTICLE' ? 'rgba(74,222,128,0.08)' : 'rgba(192,132,252,0.08)'}, transparent 70%)`, pointerEvents: 'none' }} />
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '20px', fontWeight: '600', ...badgeStyle }}>{post.postType}</span>
-                  <span style={{ fontSize: '11px', color: '#475569' }}>{timeAgo(post.createdAt)}</span>
-                </div>
-                <div style={{ fontSize: '14px', fontWeight: '600', color: '#f1f5f9', lineHeight: '1.4', letterSpacing: '-0.2px' }}>{post.title}</div>
-                <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1 }}>{post.content}</div>
-                {post.tags && (
-                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                    {post.tags.split(',').slice(0, 3).map(tag => (
-                      <span key={tag} style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', background: '#1e293b', color: '#64748b' }}>#{tag.trim()}</span>
-                    ))}
-                  </div>
-                )}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '10px', borderTop: '1px solid #1e293b' }}>
-                  <button onClick={e => handleLike(e, post.id)} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#475569', background: 'transparent', border: 'none', cursor: 'pointer', padding: '3px 7px', borderRadius: '5px', fontFamily: 'Inter, sans-serif' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(248,113,113,0.1)'; e.currentTarget.style.color = '#f87171' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569' }}
-                  >
-                    <Heart size={12} /> {post.likesCount}
-                  </button>
-                  <button onClick={e => { e.stopPropagation(); navigate(`/post/${post.id}`) }} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#475569', background: 'transparent', border: 'none', cursor: 'pointer', padding: '3px 7px', borderRadius: '5px', fontFamily: 'Inter, sans-serif' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(96,165,250,0.1)'; e.currentTarget.style.color = '#60a5fa' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569' }}
-                  >
-                    <MessageCircle size={12} /> {post.commentsCount}
-                  </button>
-                  <div style={{ flex: 1 }} />
-                  <span style={{ fontSize: '11px', color: '#334155' }}>{post.viewCount} views</span>
-                </div>
-              </div>
-            )
-          })}
         </div>
       </div>
     </Layout>

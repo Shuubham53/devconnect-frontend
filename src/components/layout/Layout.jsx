@@ -1,24 +1,19 @@
-import Sidebar from './Sidebar'
+import Navbar from './Navbar'
 import MobileNav from './MobileNav'
 
 export default function Layout({ children }) {
   return (
-    <div style={{
-      display: 'flex', minHeight: '100vh',
-      background: '#0a0a0f', fontFamily: 'Inter, sans-serif'
-    }}>
-      <Sidebar />
-      <main className="main-content" style={{
-        marginLeft: '220px',
-        flex: 1,
-        padding: '28px',
-        minWidth: 0,
+    <div style={{ minHeight: '100vh', background: '#1a1a1a', fontFamily: 'Inter, sans-serif' }}>
+      <Navbar />
+      <div className="main-content" style={{
+        maxWidth: '1100px',
+        margin: '0 auto',
+        padding: '24px 20px',
         paddingBottom: '80px',
-        boxSizing: 'border-box',
-        width: '100%'
+        boxSizing: 'border-box'
       }}>
         {children}
-      </main>
+      </div>
       <MobileNav />
     </div>
   )

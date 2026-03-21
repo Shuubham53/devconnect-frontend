@@ -17,53 +17,26 @@ export default function PostDetailPage() {
   const [replyTo, setReplyTo] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
-  useEffect(() => {
-    fetchPost()
-    fetchComments()
-  }, [id])
+  useEffect(() => { fetchPost(); fetchComments() }, [id])
 
   const fetchPost = async () => {
-    try {
-      const res = await api.get(`/api/posts/${id}`)
-      setPost(res.data.data)
-    } catch (err) {
-      toast.error('Post not found')
-      navigate('/feed')
-    } finally {
-      setLoading(false)
-    }
+    try { const res = await api.get(`/api/posts/${id}`); setPost(res.data.data) }
+    catch (err) { toast.error('Post not found'); navigate('/feed') }
+    finally { setLoading(false) }
   }
 
   const fetchComments = async () => {
-    try {
-      const res = await api.get(`/api/comments/${id}`)
-      setComments(res.data.data || [])
-    } catch (err) {}
+    try { const res = await api.get(`/api/comments/${id}`); setComments(res.data.data || []) } catch (err) {}
   }
 
   const handleLike = async () => {
-    try {
-      await api.post(`/api/likes/${id}`)
-      fetchPost()
-      toast.success('Liked!')
-    } catch (err) {
-      if (err.response?.status === 400) {
-        await api.delete(`/api/likes/${id}`)
-        fetchPost()
-      }
-    }
+    try { await api.post(`/api/likes/${id}`); fetchPost(); toast.success('Liked!') }
+    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/likes/${id}`); fetchPost() } }
   }
 
   const handleBookmark = async () => {
-    try {
-      await api.post(`/api/bookmarks/${id}`)
-      toast.success('Bookmarked!')
-    } catch (err) {
-      if (err.response?.status === 400) {
-        await api.delete(`/api/bookmarks/${id}`)
-        toast.success('Removed bookmark')
-      }
-    }
+    try { await api.post(`/api/bookmarks/${id}`); toast.success('Bookmarked!') }
+    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/bookmarks/${id}`); toast.success('Removed') } }
   }
 
   const handleComment = async (e) => {
@@ -71,161 +44,92 @@ export default function PostDetailPage() {
     if (!comment.trim()) return
     setSubmitting(true)
     try {
-      if (replyTo) {
-        await api.post(`/api/comments/${replyTo}/reply`, { content: comment })
-        toast.success('Reply added!')
-      } else {
-        await api.post(`/api/comments/${id}`, { content: comment })
-        toast.success('Comment added!')
-      }
-      setComment('')
-      setReplyTo(null)
-      fetchComments()
-      fetchPost()
-    } catch (err) {
-      toast.error('Failed to add comment')
-    } finally {
-      setSubmitting(false)
-    }
+      if (replyTo) await api.post(`/api/comments/${replyTo}/reply`, { content: comment })
+      else await api.post(`/api/comments/${id}`, { content: comment })
+      setComment(''); setReplyTo(null); fetchComments(); fetchPost()
+      toast.success(replyTo ? 'Reply added!' : 'Comment added!')
+    } catch (err) { toast.error('Failed to add comment') }
+    finally { setSubmitting(false) }
   }
 
-  const getBadgeStyle = (type) => {
+  const getTypeStyle = (type) => {
     switch (type) {
-      case 'QUESTION': return { background: '#1e3a5f', color: '#60a5fa' }
-      case 'ARTICLE': return { background: '#1a2e1a', color: '#4ade80' }
-      case 'DISCUSSION': return { background: '#2d1b4e', color: '#c084fc' }
-      default: return { background: '#1e293b', color: '#94a3b8' }
+      case 'QUESTION': return { bg: 'rgba(96,165,250,0.1)', color: '#60a5fa', border: 'rgba(96,165,250,0.2)' }
+      case 'ARTICLE': return { bg: 'rgba(0,184,163,0.1)', color: '#00b8a3', border: 'rgba(0,184,163,0.2)' }
+      case 'DISCUSSION': return { bg: 'rgba(192,132,252,0.1)', color: '#c084fc', border: 'rgba(192,132,252,0.2)' }
+      default: return { bg: '#3d3d3d', color: '#94a3b8', border: '#3d3d3d' }
     }
   }
 
-  const getInitials = (name) => {
-    if (!name) return '?'
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-  }
-
-  const getAvatarColor = (name) => {
-    const colors = [
-      { bg: '#1e3a5f', color: '#60a5fa' },
-      { bg: '#1a2e1a', color: '#4ade80' },
-      { bg: '#2d1b4e', color: '#c084fc' },
-      { bg: '#1a1a2e', color: '#f87171' },
-      { bg: '#1a2e2e', color: '#34d399' },
-    ]
-    const index = name?.charCodeAt(0) % colors.length || 0
-    return colors[index]
-  }
+  const getInitials = (name) => { if (!name) return '?'; return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }
+  const getAvatarColor = (name) => { const c = ['#60a5fa','#00b8a3','#c084fc','#f87171','#34d399']; return c[name?.charCodeAt(0) % c.length || 0] }
 
   const timeAgo = (dateStr) => {
-    const date = new Date(dateStr)
-    const now = new Date()
-    const diff = Math.floor((now - date) / 1000)
+    const diff = Math.floor((new Date() - new Date(dateStr)) / 1000)
     if (diff < 60) return 'just now'
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
     return `${Math.floor(diff / 86400)}d ago`
   }
 
-  if (loading) return (
-    <Layout>
-      <div style={{ textAlign: 'center', padding: '60px', color: '#475569' }}>
-        Loading...
-      </div>
-    </Layout>
-  )
-
+  if (loading) return <Layout><div style={{ textAlign: 'center', padding: '60px', color: '#64748b', fontSize: '13px' }}>Loading...</div></Layout>
   if (!post) return null
 
-  const avatarColor = getAvatarColor(post.authorName)
-  const badgeStyle = getBadgeStyle(post.postType)
+  const typeStyle = getTypeStyle(post.postType)
+  const authorColor = getAvatarColor(post.authorName)
+  const userColor = getAvatarColor(user?.username || '')
 
   return (
     <Layout>
-      <div style={{ maxWidth: '85%' }}>
+      <div style={{ maxWidth: '760px', margin: '0 auto' }}>
 
-        {/* Back button */}
-        <button onClick={() => navigate('/feed')} style={{
-          display: 'flex', alignItems: 'center', gap: '8px',
-          color: '#475569', fontSize: '13px', background: 'transparent',
-          border: 'none', cursor: 'pointer', marginBottom: '20px',
-          fontFamily: 'Inter, sans-serif', padding: '0'
-        }}
-          onMouseEnter={e => e.currentTarget.style.color = '#e2e8f0'}
-          onMouseLeave={e => e.currentTarget.style.color = '#475569'}
+        {/* Back */}
+        <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '13px', background: 'transparent', border: 'none', cursor: 'pointer', marginBottom: '16px', fontFamily: 'Inter, sans-serif', padding: 0 }}
+          onMouseEnter={e => e.currentTarget.style.color = '#eff1f6'}
+          onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
         >
-          <ArrowLeft size={16} />
-          Back to feed
+          <ArrowLeft size={14} /> Back
         </button>
 
-        {/* Post Card */}
-        <div style={{
-          background: '#0d0d18', border: '1px solid #1e293b',
-          borderRadius: '12px', padding: '28px', marginBottom: '20px'
-        }}>
+        {/* Post */}
+        <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '24px', marginBottom: '12px' }}>
 
           {/* Header */}
-          <div style={{
-            display: 'flex', alignItems: 'center',
-            gap: '12px', marginBottom: '20px'
-          }}>
-            <div style={{
-              width: '40px', height: '40px', borderRadius: '50%',
-              background: avatarColor.bg, color: avatarColor.color,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '13px', fontWeight: '700', flexShrink: 0
-            }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: `${authorColor}20`, border: `1px solid ${authorColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '700', color: authorColor, flexShrink: 0 }}>
               {getInitials(post.authorName)}
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '14px', fontWeight: '600', color: '#e2e8f0' }}>
-                {post.authorName}
-              </div>
-              <div style={{ fontSize: '12px', color: '#475569' }}>
-                {timeAgo(post.createdAt)} · {post.viewCount} views
-              </div>
+              <div style={{ fontSize: '13px', fontWeight: '600', color: '#eff1f6' }}>{post.authorName}</div>
+              <div style={{ fontSize: '11px', color: '#64748b' }}>{timeAgo(post.createdAt)} · {post.viewCount} views</div>
             </div>
-            <span style={{
-              fontSize: '11px', padding: '4px 10px',
-              borderRadius: '20px', fontWeight: '600',
-              letterSpacing: '0.3px', ...badgeStyle
-            }}>
+            <span style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '4px', fontWeight: '600', background: typeStyle.bg, color: typeStyle.color, border: `1px solid ${typeStyle.border}` }}>
               {post.postType}
             </span>
           </div>
 
           {/* Title */}
-          <h1 style={{
-            fontSize: '24px', fontWeight: '700', color: '#f1f5f9',
-            marginBottom: '16px', lineHeight: '1.3', letterSpacing: '-0.5px'
-          }}>
+          <h1 style={{ fontSize: '22px', fontWeight: '700', color: '#eff1f6', marginBottom: '14px', lineHeight: '1.3', letterSpacing: '-0.3px' }}>
             {post.title}
           </h1>
 
           {/* Image */}
           {post.imageUrl && (
-            <div style={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
-              <img src={post.imageUrl} alt="post"
-                style={{ width: '100%', maxHeight: '400px', objectFit: 'cover' }}
-              />
+            <div style={{ marginBottom: '16px', borderRadius: '6px', overflow: 'hidden' }}>
+              <img src={post.imageUrl} alt="post" style={{ width: '100%', maxHeight: '360px', objectFit: 'cover' }} />
             </div>
           )}
 
           {/* Content */}
-          <div style={{
-            fontSize: '15px', color: '#94a3b8',
-            lineHeight: '1.8', marginBottom: '20px',
-            whiteSpace: 'pre-wrap'
-          }}>
+          <div style={{ fontSize: '14px', color: '#94a3b8', lineHeight: '1.8', marginBottom: '16px', whiteSpace: 'pre-wrap' }}>
             {post.content}
           </div>
 
           {/* Tags */}
           {post.tags && (
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '16px' }}>
               {post.tags.split(',').map(tag => (
-                <span key={tag} style={{
-                  fontSize: '12px', padding: '4px 10px',
-                  borderRadius: '6px', background: '#1e293b', color: '#94a3b8'
-                }}>
+                <span key={tag} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: '#1a1a1a', color: '#64748b', border: '1px solid #3d3d3d' }}>
                   {tag.trim()}
                 </span>
               ))}
@@ -233,102 +137,52 @@ export default function PostDetailPage() {
           )}
 
           {/* Actions */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            paddingTop: '16px', borderTop: '1px solid #1e293b'
-          }}>
-            <button onClick={handleLike} style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '8px 14px', borderRadius: '8px', border: 'none',
-              background: '#1e293b', color: '#e2e8f0', cursor: 'pointer',
-              fontSize: '13px', fontFamily: 'Inter, sans-serif'
-            }}>
-              <Heart size={15} />
-              {post.likesCount} Likes
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingTop: '14px', borderTop: '1px solid #3d3d3d' }}>
+            <button onClick={handleLike} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '7px 14px', borderRadius: '6px', border: '1px solid #3d3d3d', background: 'transparent', color: '#94a3b8', cursor: 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif', transition: 'all 0.15s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#f87171'; e.currentTarget.style.color = '#f87171' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#3d3d3d'; e.currentTarget.style.color = '#94a3b8' }}
+            >
+              <Heart size={14} /> {post.likesCount} Likes
             </button>
-
-            <button style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '8px 14px', borderRadius: '8px', border: 'none',
-              background: '#1e293b', color: '#e2e8f0', cursor: 'pointer',
-              fontSize: '13px', fontFamily: 'Inter, sans-serif'
-            }}>
-              <MessageCircle size={15} />
-              {post.commentsCount} Comments
+            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '7px 14px', borderRadius: '6px', border: '1px solid #3d3d3d', background: 'transparent', color: '#94a3b8', cursor: 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}>
+              <MessageCircle size={14} /> {post.commentsCount} Comments
             </button>
-
             <div style={{ flex: 1 }} />
-
-            <button onClick={handleBookmark} style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '8px 14px', borderRadius: '8px', border: 'none',
-              background: '#1e293b', color: '#e2e8f0', cursor: 'pointer',
-              fontSize: '13px', fontFamily: 'Inter, sans-serif'
-            }}>
-              <Bookmark size={15} />
-              Bookmark
+            <button onClick={handleBookmark} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '7px 14px', borderRadius: '6px', border: '1px solid #3d3d3d', background: 'transparent', color: '#94a3b8', cursor: 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif', transition: 'all 0.15s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#ffa116'; e.currentTarget.style.color = '#ffa116' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#3d3d3d'; e.currentTarget.style.color = '#94a3b8' }}
+            >
+              <Bookmark size={14} /> Save
             </button>
           </div>
         </div>
 
-        {/* Comments Section */}
-        <div style={{
-          background: '#0d0d18', border: '1px solid #1e293b',
-          borderRadius: '12px', padding: '24px'
-        }}>
-          <h2 style={{
-            fontSize: '16px', fontWeight: '600', color: '#f1f5f9',
-            marginBottom: '20px'
-          }}>
+        {/* Comments */}
+        <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '20px' }}>
+          <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#eff1f6', marginBottom: '16px' }}>
             {post.commentsCount} Comments
           </h2>
 
           {/* Add Comment */}
-          <form onSubmit={handleComment} style={{ marginBottom: '24px' }}>
+          <form onSubmit={handleComment} style={{ marginBottom: '20px' }}>
             {replyTo && (
-              <div style={{
-                fontSize: '12px', color: '#00ff87', marginBottom: '8px',
-                display: 'flex', alignItems: 'center', gap: '8px'
-              }}>
+              <div style={{ fontSize: '12px', color: '#ffa116', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 Replying to comment
-                <button type="button" onClick={() => setReplyTo(null)} style={{
-                  background: 'transparent', border: 'none',
-                  color: '#475569', cursor: 'pointer', fontSize: '12px'
-                }}>
-                  Cancel
-                </button>
+                <button type="button" onClick={() => setReplyTo(null)} style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '12px' }}>Cancel</button>
               </div>
             )}
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-              <div style={{
-                width: '32px', height: '32px', borderRadius: '50%',
-                background: 'rgba(0,255,135,0.15)', color: '#00ff87',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '11px', fontWeight: '700', flexShrink: 0
-              }}>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: `${userColor}20`, border: `1px solid ${userColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', color: userColor, flexShrink: 0 }}>
                 {getInitials(user?.username || '?')}
               </div>
               <div style={{ flex: 1, display: 'flex', gap: '8px' }}>
-                <textarea
-                  value={comment}
-                  onChange={e => setComment(e.target.value)}
-                  placeholder="Write a comment..."
-                  rows={2}
-                  style={{
-                    flex: 1, padding: '10px 14px', borderRadius: '8px',
-                    background: '#0a0a0f', border: '1px solid #1e293b',
-                    color: '#e2e8f0', fontSize: '13px', outline: 'none',
-                    resize: 'none', fontFamily: 'Inter, sans-serif'
-                  }}
-                  onFocus={e => e.target.style.borderColor = '#00ff87'}
-                  onBlur={e => e.target.style.borderColor = '#1e293b'}
+                <textarea value={comment} onChange={e => setComment(e.target.value)} placeholder="Write a comment..." rows={2}
+                  style={{ flex: 1, padding: '9px 12px', borderRadius: '6px', background: '#1a1a1a', border: '1px solid #3d3d3d', color: '#eff1f6', fontSize: '13px', outline: 'none', resize: 'none', fontFamily: 'Inter, sans-serif', transition: 'border-color 0.15s' }}
+                  onFocus={e => e.target.style.borderColor = '#ffa116'}
+                  onBlur={e => e.target.style.borderColor = '#3d3d3d'}
                 />
-                <button type="submit" disabled={submitting} style={{
-                  padding: '10px 16px', borderRadius: '8px',
-                  background: '#00ff87', border: 'none', color: '#000',
-                  cursor: 'pointer', flexShrink: 0
-                }}>
-                  <Send size={16} />
+                <button type="submit" disabled={submitting} style={{ padding: '9px 14px', borderRadius: '6px', background: '#ffa116', border: 'none', color: '#000', cursor: 'pointer', flexShrink: 0 }}>
+                  <Send size={15} />
                 </button>
               </div>
             </div>
@@ -336,101 +190,60 @@ export default function PostDetailPage() {
 
           {/* Comments List */}
           {comments.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '32px', color: '#475569', fontSize: '13px' }}>
-              No comments yet. Be the first to comment!
+            <div style={{ textAlign: 'center', padding: '28px', color: '#64748b', fontSize: '13px' }}>
+              No comments yet. Be the first!
             </div>
-          ) : (
-            comments.map(c => {
-              const cAvatarColor = getAvatarColor(c.authorName)
-              return (
-                <div key={c.id} style={{ marginBottom: '20px' }}>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <div style={{
-                      width: '32px', height: '32px', borderRadius: '50%',
-                      background: cAvatarColor.bg, color: cAvatarColor.color,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '11px', fontWeight: '700', flexShrink: 0
-                    }}>
-                      {getInitials(c.authorName)}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{
-                        background: '#0a0a0f', borderRadius: '8px',
-                        padding: '12px 14px', border: '1px solid #1e293b'
-                      }}>
-                        <div style={{
-                          display: 'flex', alignItems: 'center',
-                          gap: '8px', marginBottom: '6px'
-                        }}>
-                          <span style={{ fontSize: '13px', fontWeight: '600', color: '#e2e8f0' }}>
-                            {c.authorName}
-                          </span>
-                          <span style={{ fontSize: '11px', color: '#475569' }}>
-                            {timeAgo(c.createdAt)}
-                          </span>
-                          {c.isEdited && (
-                            <span style={{ fontSize: '10px', color: '#475569' }}>edited</span>
-                          )}
-                        </div>
-                        <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6', margin: 0 }}>
-                          {c.content}
-                        </p>
+          ) : comments.map(c => {
+            const cColor = getAvatarColor(c.authorName)
+            return (
+              <div key={c.id} style={{ marginBottom: '16px' }}>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: `${cColor}20`, border: `1px solid ${cColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', color: cColor, flexShrink: 0 }}>
+                    {getInitials(c.authorName)}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ background: '#1a1a1a', borderRadius: '6px', padding: '10px 12px', border: '1px solid #3d3d3d' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px' }}>
+                        <span style={{ fontSize: '12px', fontWeight: '600', color: '#eff1f6' }}>{c.authorName}</span>
+                        <span style={{ fontSize: '11px', color: '#64748b' }}>{timeAgo(c.createdAt)}</span>
+                        {c.isEdited && <span style={{ fontSize: '10px', color: '#64748b' }}>edited</span>}
                       </div>
-                      <button onClick={() => setReplyTo(c.id)} style={{
-                        background: 'transparent', border: 'none',
-                        color: '#475569', fontSize: '12px', cursor: 'pointer',
-                        marginTop: '6px', fontFamily: 'Inter, sans-serif'
-                      }}>
-                        Reply
-                      </button>
-
-                      {/* Replies */}
-                      {c.replies && c.replies.length > 0 && (
-                        <div style={{ marginTop: '12px', paddingLeft: '16px', borderLeft: '2px solid #1e293b' }}>
-                          {c.replies.map(reply => {
-                            const rAvatarColor = getAvatarColor(reply.authorName)
-                            return (
-                              <div key={reply.id} style={{
-                                display: 'flex', gap: '8px', marginBottom: '12px'
-                              }}>
-                                <div style={{
-                                  width: '26px', height: '26px', borderRadius: '50%',
-                                  background: rAvatarColor.bg, color: rAvatarColor.color,
-                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                  fontSize: '9px', fontWeight: '700', flexShrink: 0
-                                }}>
-                                  {getInitials(reply.authorName)}
-                                </div>
-                                <div style={{
-                                  background: '#0a0a0f', borderRadius: '8px',
-                                  padding: '10px 12px', border: '1px solid #1e293b', flex: 1
-                                }}>
-                                  <div style={{
-                                    display: 'flex', alignItems: 'center',
-                                    gap: '8px', marginBottom: '4px'
-                                  }}>
-                                    <span style={{ fontSize: '12px', fontWeight: '600', color: '#e2e8f0' }}>
-                                      {reply.authorName}
-                                    </span>
-                                    <span style={{ fontSize: '10px', color: '#475569' }}>
-                                      {timeAgo(reply.createdAt)}
-                                    </span>
-                                  </div>
-                                  <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0 }}>
-                                    {reply.content}
-                                  </p>
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      )}
+                      <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6', margin: 0 }}>{c.content}</p>
                     </div>
+                    <button onClick={() => setReplyTo(c.id)} style={{ background: 'transparent', border: 'none', color: '#64748b', fontSize: '12px', cursor: 'pointer', marginTop: '5px', fontFamily: 'Inter, sans-serif' }}
+                      onMouseEnter={e => e.currentTarget.style.color = '#ffa116'}
+                      onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
+                    >
+                      Reply
+                    </button>
+
+                    {/* Replies */}
+                    {c.replies?.length > 0 && (
+                      <div style={{ marginTop: '10px', paddingLeft: '12px', borderLeft: '2px solid #3d3d3d' }}>
+                        {c.replies.map(reply => {
+                          const rColor = getAvatarColor(reply.authorName)
+                          return (
+                            <div key={reply.id} style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+                              <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: `${rColor}20`, border: `1px solid ${rColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '700', color: rColor, flexShrink: 0 }}>
+                                {getInitials(reply.authorName)}
+                              </div>
+                              <div style={{ background: '#1a1a1a', borderRadius: '6px', padding: '8px 10px', border: '1px solid #3d3d3d', flex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                                  <span style={{ fontSize: '11px', fontWeight: '600', color: '#eff1f6' }}>{reply.authorName}</span>
+                                  <span style={{ fontSize: '10px', color: '#64748b' }}>{timeAgo(reply.createdAt)}</span>
+                                </div>
+                                <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{reply.content}</p>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
-              )
-            })
-          )}
+              </div>
+            )
+          })}
         </div>
       </div>
     </Layout>
