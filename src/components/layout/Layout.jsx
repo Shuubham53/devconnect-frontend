@@ -9,7 +9,7 @@ export default function Layout({ children }) {
         <Navbar />
       </div>
       <div className="main-content" style={{
-        maxWidth: '1100px',
+        maxWidth: '1200px',
         margin: '0 auto',
         padding: '24px 20px',
         paddingBottom: '80px',

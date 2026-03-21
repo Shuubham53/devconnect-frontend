@@ -53,12 +53,12 @@ export default function NotificationsPage() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: '680px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto' }}>
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
           <div>
-            <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#eff1f6', margin: 0 }}>Notifications</h1>
+            <h1 style={{ fontSize: '20px', fontWeight: '800', color: '#eff1f6', margin: 0 }}>Notifications</h1>
             {unreadCount > 0 && <p style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>{unreadCount} unread</p>}
           </div>
           {unreadCount > 0 && (

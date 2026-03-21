@@ -89,8 +89,8 @@ export default function ProfilePage() {
 
   // Left sidebar — LeetCode style profile
   const ProfileSidebar = () => (
-    <div style={{ width: '260px', flexShrink: 0 }}>
-      <div style={{ background: '#282828', borderRadius: '8px', padding: '20px' }}>
+    <div style={{ width: '300px', flexShrink: 0 }}>
+      <div style={{ background: '#28282858', borderRadius: '8px', padding: '20px' }}>
 
         {/* Top row — avatar left, info right like LeetCode */}
         <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', marginBottom: '14px' }}>
@@ -111,8 +111,8 @@ export default function ProfilePage() {
           {/* Name + username + rank */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: '16px', fontWeight: '700', color: '#eff1f6', marginBottom: '2px', lineHeight: 1.2 }}>{profile.name}</div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px' }}>{profile.username}</div>
-            <div style={{ fontSize: '12px', color: '#64748b' }}>
+            <div style={{ fontSize: '13px', color: '#7e8897', marginBottom: '6px' }}>{profile.username}</div>
+            <div style={{ fontSize: '13px', color: '#f6f8fb' }}>
               Score <span style={{ color: '#ffa116', fontWeight: '700' }}>{profile.score}</span>
             </div>
           </div>
@@ -121,10 +121,10 @@ export default function ProfilePage() {
         {/* Followers / Following row — like LeetCode */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '14px', fontSize: '13px' }}>
           <span style={{ color: '#eff1f6', fontWeight: '600' }}>{profile.followingCount}</span>
-          <span style={{ color: '#64748b' }}>Following</span>
+          <span style={{ color: '#aaabac' }}>Following</span>
           <span style={{ color: '#3d3d3d', margin: '0 6px' }}>|</span>
           <span style={{ color: '#eff1f6', fontWeight: '600' }}>{profile.followersCount}</span>
-          <span style={{ color: '#64748b' }}>Followers</span>
+          <span style={{ color: '#aaabac' }}>Followers</span>
         </div>
 
         {/* Badge */}
@@ -244,7 +244,7 @@ export default function ProfilePage() {
   const MainContent = () => (
     <div style={{ flex: 1, minWidth: 0 }}>
       {/* Tabs — LeetCode underline style */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #3d3d3d', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid #3d3d3db6', marginBottom: '16px' }}>
         {[
           { key: 'posts', label: 'Posts', count: posts.length },
           ...(isOwnProfile ? [{ key: 'score', label: 'Score History' }] : [])

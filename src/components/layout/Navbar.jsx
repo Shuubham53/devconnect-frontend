@@ -42,7 +42,7 @@ export default function Navbar() {
 
   return (
     <div style={{ background: '#282828', borderBottom: '1px solid #3d3d3d', position: 'sticky', top: 0, zIndex: 100, fontFamily: 'Inter, sans-serif' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'center', height: '54px', gap: '8px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'center', height: '54px', gap: '8px' }}>
 
         {/* Logo */}
         <Link to="/feed" style={{ textDecoration: 'none', flexShrink: 0, marginRight: '16px' }}>

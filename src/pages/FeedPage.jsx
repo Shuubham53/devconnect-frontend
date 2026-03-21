@@ -112,7 +112,8 @@ export default function FeedPage() {
           {loading ? (
             <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', fontSize: '13px' }}>Loading...</div>
           ) : posts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 20px', background: '#282828', borderRadius: '8px', border: '1px solid #3d3d3d' }}>
+            //<div style={{ background: '#282828', border: '1px solid hsla(0, 0%, 24%, 0.11)', borderRadius: '8px', padding: '14px', marginBottom: '12px' }}
+            <div style={{ textAlign: 'center', padding: '60px 20px', background: '#282828', borderRadius: '8px',  border: '1px solid hsla(0, 0%, 24%, 0.11)' }}>
               <div style={{ fontSize: '28px', marginBottom: '10px' }}>👋</div>
               <div style={{ color: '#eff1f6', fontWeight: '600', marginBottom: '6px', fontSize: '14px' }}>No posts yet</div>
               <div style={{ color: '#64748b', fontSize: '13px' }}>Be the first to create a post!</div>
@@ -191,11 +192,11 @@ export default function FeedPage() {
         </div>
 
         {/* Right Panel */}
-        <div className="right-panel" style={{ width: '240px', flexShrink: 0 }}>
+        <div className="right-panel" style={{ width: '250px', flexShrink: 0 }}>
 
           {/* Top Developers */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '14px', marginBottom: '12px' }}>
-            <div style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '12px' }}>
+          <div style={{ background: '#282828', border: '1px solid hsla(0, 0%, 24%, 0.11)', borderRadius: '8px', padding: '14px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '12px', fontWeight: '800', color: '#94a3b8', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '12px' }}>
               Top Developers
             </div>
             {leaderboard.map((dev, i) => {
@@ -220,7 +221,7 @@ export default function FeedPage() {
           </div>
 
           {/* Trending Tags */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '14px' }}>
+          <div style={{ background: '#282828', border: '1px solid hsla(0, 0%, 24%, 0.11', borderRadius: '8px', padding: '14px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
               <TrendingUp size={13} color='#ffa116' />
               <span style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Trending</span>

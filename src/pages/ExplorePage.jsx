@@ -55,7 +55,7 @@ export default function ExplorePage() {
     const typeStyle = getTypeStyle(post.postType)
     return (
       <div onClick={() => navigate(`/post/${post.id}`)}
-        style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '16px', cursor: 'pointer', transition: 'border-color 0.15s', marginBottom: '8px' }}
+        style={{ background: '#282828', border: '1px solid #3d3d3d67', borderRadius: '8px', padding: '16px', cursor: 'pointer', transition: 'border-color 0.15s', marginBottom: '8px' }}
         onMouseEnter={e => e.currentTarget.style.borderColor = '#555'}
         onMouseLeave={e => e.currentTarget.style.borderColor = '#3d3d3d'}
       >
@@ -95,8 +95,8 @@ export default function ExplorePage() {
         {/* Main */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ marginBottom: '16px' }}>
-            <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#eff1f6', margin: 0 }}>Explore</h1>
-            <p style={{ fontSize: '13px', color: '#64748b', margin: '3px 0 0' }}>
+            <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#eff1f6', margin: 0 }}>Explore</h1>
+            <p style={{ fontSize: '14px', color: '#64748b', margin: '3px 0 0' }}>
               {selectedTag ? `Posts tagged #${selectedTag}` : 'Trending posts right now'}
             </p>
           </div>
@@ -118,7 +118,7 @@ export default function ExplorePage() {
         <div className="explore-right" style={{ width: '240px', flexShrink: 0 }}>
 
           {/* Trending Now */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+          <div style={{ background: '#282828', border: '1px solid hsla(0, 0%, 24%, 0.11)', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
             <div style={{ padding: '12px 14px', borderBottom: '1px solid #3d3d3d', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <TrendingUp size={13} color='#ffa116' />
               <span style={{ fontSize: '12px', fontWeight: '600', color: '#eff1f6' }}>Trending Now</span>
@@ -150,7 +150,7 @@ export default function ExplorePage() {
           </div>
 
           {/* Popular Tags */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', overflow: 'hidden' }}>
+          <div style={{ background: '#282828', border: '1px solid hsla(0, 0%, 24%, 0.11)', borderRadius: '8px', overflow: 'hidden' }}>
             <div style={{ padding: '12px 14px', borderBottom: '1px solid #3d3d3d', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Hash size={13} color='#94a3b8' />
               <span style={{ fontSize: '12px', fontWeight: '600', color: '#eff1f6' }}>Popular Tags</span>
