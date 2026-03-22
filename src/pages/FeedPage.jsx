@@ -45,9 +45,9 @@ export default function FeedPage() {
   }
 
   const handleLike = async (postId) => {
-    try { await api.post(`/api/likes/${postId}`); fetchPosts(); toast.success('Liked!') }
-    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/likes/${postId}`); fetchPosts() } }
-  }
+  try { await api.post(`/api/likes/${postId}/toggle`); fetchPosts() }
+  catch (err) { toast.error('Failed to like') }
+}
 
   const handleBookmark = async (postId) => {
     try { await api.post(`/api/bookmarks/${postId}`); toast.success('Bookmarked!') }

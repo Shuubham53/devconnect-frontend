@@ -23,11 +23,32 @@ export default function ProfilePage() {
     if (user) { fetchProfile(); fetchUserPosts(); if (isOwnProfile) fetchScoreHistory() }
   }, [username, user])
 
-  const fetchProfile = async () => {
-    try { const res = await api.get(`/api/users/${username}`); setProfile(res.data.data) }
-    catch (err) { toast.error('User not found'); navigate('/feed') }
-    finally { setLoading(false) }
+  // Replace fetchProfile with this — sets following state from API
+const fetchProfile = async () => {
+  try {
+    const res = await api.get(`/api/users/${username}`)
+    setProfile(res.data.data)
+    // Check if current user is following this profile
+    if (!isOwnProfile) {
+      const followRes = await api.get(`/api/follow/${res.data.data.id}/is-following`)
+      setFollowing(followRes.data.data)
+    }
+  } catch (err) { toast.error('User not found'); navigate('/feed') }
+  finally { setLoading(false) }
+}
+
+// Replace handleFollow with this
+const handleFollow = async () => {
+  try {
+    const res = await api.post(`/api/follow/${profile.id}/toggle`)
+    const result = res.data.message // "followed" or "unfollowed"
+    setFollowing(result === 'followed')
+    toast.success(result === 'followed' ? 'Following!' : 'Unfollowed!')
+    fetchProfile()
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Error')
   }
+}
 
   const fetchUserPosts = async () => {
     try { const res = await api.get(`/api/posts/user/${username}`); setPosts(res.data.data || []) } catch (err) {}
@@ -37,19 +58,11 @@ export default function ProfilePage() {
     try { const res = await api.get('/api/users/score-history'); setScoreHistory(res.data.data || []) } catch (err) {}
   }
 
-  const handleFollow = async () => {
-    try {
-      if (following) { await api.delete(`/api/follow/${profile.id}`); setFollowing(false); toast.success('Unfollowed!') }
-      else { await api.post(`/api/follow/${profile.id}`); setFollowing(true); toast.success('Following!') }
-      fetchProfile()
-    } catch (err) { toast.error(err.response?.data?.message || 'Error') }
-  }
-
   const handleLike = async (e, postId) => {
-    e.stopPropagation()
-    try { await api.post(`/api/likes/${postId}`); fetchUserPosts() }
-    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/likes/${postId}`); fetchUserPosts() } }
-  }
+  e.stopPropagation()
+  try { await api.post(`/api/likes/${postId}/toggle`); fetchUserPosts() }
+  catch (err) { toast.error('Failed to like') }
+}
 
   const getBadgeConfig = (badge) => {
     switch (badge) {

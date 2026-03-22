@@ -31,9 +31,9 @@ export default function PostDetailPage() {
     try { const res = await api.get(`/api/comments/${id}`); setComments(res.data.data || []) } catch (err) {}
   }
 
-  const handleLike = async () => {
-    try { await api.post(`/api/likes/${id}`); fetchPost(); toast.success('Liked!') }
-    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/likes/${id}`); fetchPost() } }
+   const handleLike = async () => {
+    try { await api.post(`/api/likes/${id}/toggle`); fetchPost() }
+    catch (err) { toast.error('Failed to like') }
   }
 
   const handleBookmark = async () => {
