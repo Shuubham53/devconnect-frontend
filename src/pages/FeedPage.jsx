@@ -72,6 +72,12 @@ export default function FeedPage() {
     const colors = ['#60a5fa','#00b8a3','#c084fc','#f87171','#34d399']
     return colors[name?.charCodeAt(0) % colors.length || 0]
   }
+  const avatarStyles = (color) => ({
+  width: '28px', height: '28px', borderRadius: '6px',
+  background: `${color}20`, border: `none`,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  fontSize: '10px', fontWeight: '700', color, flexShrink: 0
+})
 
   const timeAgo = (dateStr) => {
     const diff = Math.floor((new Date() - new Date(dateStr)) / 1000)
@@ -207,8 +213,11 @@ export default function FeedPage() {
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <div style={{ fontSize: '11px', color: '#64748b', width: '14px', flexShrink: 0 }}>{i + 1}</div>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: `${color}20`, border: `1px solid ${color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '700', color, flexShrink: 0 }}>
-                    {getInitials(dev.name)}
+                 <div style={{ ...avatarStyles(color), overflow: 'hidden' }}>
+                    {dev.avatarUrl
+                      ? <img src={dev.avatarUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : getInitials(dev.name)
+                    }
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '12px', color: '#eff1f6', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{dev.name}</div>

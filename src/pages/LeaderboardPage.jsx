@@ -32,6 +32,14 @@ export default function LeaderboardPage() {
     return colors[name?.charCodeAt(0) % colors.length || 0]
   }
 
+  const avatarStyles = (color) => ({
+    width: '40px', height: '40px', borderRadius: '6px',
+    background: `${color}20`, border: 'none',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: '13px', fontWeight: '700', color,
+    flexShrink: 0, margin: '0 auto 8px'
+  })
+
   const getBadgeConfig = (badge) => {
     switch (badge) {
       case 'LEGEND': return { color: '#c084fc', bg: 'rgba(192,132,252,0.1)', emoji: '👑' }
@@ -93,9 +101,11 @@ export default function LeaderboardPage() {
                   onMouseLeave={e => { e.currentTarget.style.borderColor = rankConfig.border; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
                   <div style={{ fontSize: '18px', marginBottom: '8px' }}>{rankConfig.medal}</div>
-                  {/* Square avatar like LeetCode */}
-                  <div style={{ width: '40px', height: '40px', borderRadius: '6px', background: `${avatarColor}20`, border: `1px solid ${avatarColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: '700', color: avatarColor, margin: '0 auto 8px' }}>
-                    {getInitials(dev.name)}
+                  <div style={{ ...avatarStyles(avatarColor), overflow: 'hidden' }}>
+                    {dev.avatarUrl
+                      ? <img src={dev.avatarUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : getInitials(dev.name)
+                    }
                   </div>
                   <div style={{ fontSize: '12px', fontWeight: '600', color: '#eff1f6', marginBottom: '1px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{dev.name}</div>
                   <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>@{dev.username}</div>
@@ -129,8 +139,11 @@ export default function LeaderboardPage() {
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <div style={{ width: '28px', textAlign: 'center', fontSize: '12px', color: '#64748b', fontWeight: '600', flexShrink: 0 }}>#{rank}</div>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: `${avatarColor}20`, border: `1px solid ${avatarColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '700', color: avatarColor, flexShrink: 0 }}>
-                    {getInitials(dev.name)}
+                  <div style={{ ...avatarStyles(avatarColor), margin: 0, overflow: 'hidden' }}>
+                    {dev.avatarUrl
+                      ? <img src={dev.avatarUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : getInitials(dev.name)
+                    }
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '13px', fontWeight: '500', color: '#eff1f6', marginBottom: '1px' }}>{dev.name}</div>

@@ -69,7 +69,7 @@ export default function EditProfilePage() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: '560px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '570px', margin: '0 auto' }}>
 
         <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#64748b', fontSize: '13px', background: 'transparent', border: 'none', cursor: 'pointer', marginBottom: '20px', fontFamily: 'Inter, sans-serif', padding: 0 }}
           onMouseEnter={e => e.currentTarget.style.color = '#eff1f6'}
@@ -84,7 +84,7 @@ export default function EditProfilePage() {
         <form onSubmit={handleSubmit}>
 
           {/* Avatar */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '20px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div style={{ background: '#282828', border: '1px solid #2f2f2f77', borderRadius: '8px', padding: '20px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '20px' }}>
             <div style={{ position: 'relative', flexShrink: 0 }}>
               <div style={{ width: '72px', height: '72px', borderRadius: '8px', background: '#1a1a1a', border: '1px solid #3d3d3d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', fontWeight: '800', color: '#ffa116', overflow: 'hidden' }}>
                 {avatarPreview ? <img src={avatarPreview} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : getInitials(form.name || user?.username)}
@@ -101,7 +101,7 @@ export default function EditProfilePage() {
           </div>
 
           {/* Fields */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '20px' }}>
+          <div style={{ background: '#282828', border: '1px solid #2f2f2f77', borderRadius: '8px', padding: '20px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
               <div>
                 <label style={labelStyle}>Full Name</label>

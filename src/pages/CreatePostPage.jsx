@@ -63,7 +63,7 @@ export default function CreatePostPage() {
 
   return (
     <Layout>
-      <div style={{ maxWidth: '680px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '730px', margin: '0 auto' }}>
 
         {/* Back */}
         <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#64748b', fontSize: '13px', background: 'transparent', border: 'none', cursor: 'pointer', marginBottom: '20px', fontFamily: 'Inter, sans-serif', padding: 0 }}
@@ -76,13 +76,13 @@ export default function CreatePostPage() {
         {/* Header */}
         <div style={{ marginBottom: '20px' }}>
           <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#eff1f6', margin: 0 }}>Create Post</h1>
-          <p style={{ fontSize: '13px', color: '#64748b', marginTop: '3px' }}>Share your knowledge with the community</p>
+          <p style={{ fontSize: '14px', color: '#64748b', marginTop: '3px' }}>Share your knowledge with the community</p>
         </div>
 
         <form onSubmit={handleSubmit}>
 
           {/* Post Type */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '16px', marginBottom: '12px' }}>
+          <div style={{ background: '#282828', border: '1px solid #1615152a', borderRadius: '8px', padding: '16px', marginBottom: '12px' }}>
             <label style={labelStyle}>Post Type</label>
             <div style={{ display: 'flex', gap: '8px' }}>
               {postTypes.map(({ key, color, bg, border }) => {
@@ -103,7 +103,7 @@ export default function CreatePostPage() {
           </div>
 
           {/* Title */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '16px', marginBottom: '12px' }}>
+          <div style={{ background: '#282828', border: '1px solid #1615152a', borderRadius: '8px', padding: '16px', marginBottom: '12px' }}>
             <label style={labelStyle}>Title</label>
             <input type="text" name="title" value={form.title} onChange={handleChange}
               placeholder="Write a clear, descriptive title" required style={inputStyle}
@@ -113,7 +113,7 @@ export default function CreatePostPage() {
           </div>
 
           {/* Content */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '16px', marginBottom: '12px' }}>
+          <div style={{ background: '#282828', border: '1px solid #1615152a', borderRadius: '8px', padding: '16px', marginBottom: '12px' }}>
             <label style={labelStyle}>Content</label>
             <textarea name="content" value={form.content} onChange={handleChange}
               placeholder="Write your post content here..." required rows={8}
@@ -124,27 +124,27 @@ export default function CreatePostPage() {
           </div>
 
           {/* Tags */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '16px', marginBottom: '12px' }}>
-            <label style={labelStyle}>Tags <span style={{ color: '#64748b', fontWeight: '400' }}>(comma separated)</span></label>
+          <div style={{ background: '#282828', border: '1px solid #1615152a', borderRadius: '8px', padding: '16px', marginBottom: '12px' }}>
+            <label style={labelStyle}>Tags <span style={{ color: '#64748b', fontWeight: '400' }}></span></label>
             <input type="text" name="tags" value={form.tags} onChange={handleChange}
-              placeholder="java, springboot, backend" style={inputStyle}
+              placeholder="tags (comma separated)" style={inputStyle}
               onFocus={e => e.target.style.borderColor = '#ffa116'}
               onBlur={e => e.target.style.borderColor = '#3d3d3d'}
             />
           </div>
 
           {/* Image */}
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+          <div style={{ background: '#282828e3', border: '1px solid #1615152a', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
             <label style={labelStyle}>Cover Image <span style={{ color: '#64748b', fontWeight: '400' }}>(optional)</span></label>
             {imagePreview ? (
               <div style={{ position: 'relative' }}>
-                <img src={imagePreview} alt="preview" style={{ width: '100%', maxHeight: '180px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #3d3d3d' }} />
-                <button type="button" onClick={() => { setImageFile(null); setImagePreview(null) }} style={{ position: 'absolute', top: '8px', right: '8px', width: '26px', height: '26px', borderRadius: '50%', background: '#1a1a1a', border: '1px solid #3d3d3d', color: '#eff1f6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src={imagePreview} alt="preview" style={{ width: '100%', maxHeight: '180px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #828080' }} />
+                <button type="button" onClick={() => { setImageFile(null); setImagePreview(null) }} style={{ position: 'absolute', top: '8px', right: '8px', width: '26px', height: '26px', borderRadius: '50%', background: '#0c0c0c', border: '1px solid #3d3d3d7e', color: '#eff1f6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <X size={13} />
                 </button>
               </div>
             ) : (
-              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '20px', borderRadius: '6px', border: '1px dashed #3d3d3d', cursor: 'pointer', color: '#64748b', fontSize: '13px', transition: 'all 0.15s' }}
+              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '20px', borderRadius: '6px', border: '1px dashed #a19c9c6d', cursor: 'pointer', color: '#484a4b', fontSize: '13px', transition: 'all 0.15s' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#ffa116'; e.currentTarget.style.color = '#ffa116' }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = '#3d3d3d'; e.currentTarget.style.color = '#64748b' }}
               >
