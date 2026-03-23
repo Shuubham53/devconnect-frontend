@@ -12,6 +12,10 @@ import ExplorePage from './pages/ExplorePage'
 import CreatePostPage from './pages/CreatePostPage'
 import EditProfilePage from './pages/EditProfilePage'
 import LandingPage from './pages/LandingPage'
+import BookmarkPage from './pages/BookmarkPage'
+
+// Inside your routes
+
 
 function App() {
   const { user, loading } = useAuth()
@@ -40,6 +44,7 @@ function App() {
       <Route path="/explore" element={user ? <ExplorePage /> : <Navigate to="/login" />} />
       <Route path="/create-post" element={user ? <CreatePostPage /> : <Navigate to="/login" />} />
       <Route path="/settings" element={user ? <EditProfilePage /> : <Navigate to="/login" />} />
+      <Route path="/bookmarks" element={<BookmarkPage />} />
     </Routes>
   )
 }

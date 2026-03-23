@@ -185,7 +185,7 @@ export default function LeaderboardPage() {
       {/* Rest list */}
       {rest.length > 0 && (
         <div style={{ background: '#242424', border: '1px solid #333', borderRadius: '10px', overflow: 'hidden' }}>
-          <div style={{ padding: '10px 18px', borderBottom: '1px solid #2d2d2d', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '10px 18px', borderBottom: '1px solid #2d2d2d8d', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: '11px', fontWeight: '700', color: '#6b7280', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
               Rankings #{4}–#{3 + rest.length}
             </span>
