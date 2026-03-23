@@ -35,16 +35,16 @@ function App() {
       <Route path="/" element={user ? <Navigate to="/feed" /> : <LandingPage />} />
       <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/feed" />} />
       <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/feed" />} />
-      <Route path="/feed" element={user ? <FeedPage /> : <Navigate to="/login" />} />
-      <Route path="/post/:id" element={user ? <PostDetailPage /> : <Navigate to="/login" />} />
-      <Route path="/profile/:username" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
-      <Route path="/notifications" element={user ? <NotificationsPage /> : <Navigate to="/login" />} />
-      <Route path="/leaderboard" element={user ? <LeaderboardPage /> : <Navigate to="/login" />} />
-      <Route path="/search" element={user ? <SearchPage /> : <Navigate to="/login" />} />
-      <Route path="/explore" element={user ? <ExplorePage /> : <Navigate to="/login" />} />
-      <Route path="/create-post" element={user ? <CreatePostPage /> : <Navigate to="/login" />} />
-      <Route path="/settings" element={user ? <EditProfilePage /> : <Navigate to="/login" />} />
-      <Route path="/bookmarks" element={<BookmarkPage />} />
+      <Route path="/feed" element={user ? <FeedPage /> : <Navigate to="/" />} />
+      <Route path="/post/:id" element={user ? <PostDetailPage /> : <Navigate to="/" />} />
+      <Route path="/profile/:username" element={user ? <ProfilePage /> : <Navigate to="/" />} />
+      <Route path="/notifications" element={user ? <NotificationsPage /> : <Navigate to="/" />} />
+      <Route path="/leaderboard" element={user ? <LeaderboardPage /> : <Navigate to="/" />} />
+      <Route path="/search" element={user ? <SearchPage /> : <Navigate to="/" />} />
+      <Route path="/explore" element={user ? <ExplorePage /> : <Navigate to="/" />} />
+      <Route path="/create-post" element={user ? <CreatePostPage /> : <Navigate to="/" />} />
+      <Route path="/settings" element={user ? <EditProfilePage /> : <Navigate to="/" />} />
+      <Route path="/bookmarks" element={user ? <BookmarkPage /> : <Navigate to="/" />} />
     </Routes>
   )
 }
