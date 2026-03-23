@@ -87,7 +87,7 @@ export default function NotificationsPage() {
             <div style={{ fontSize: '13px', color: '#64748b' }}>No notifications yet.</div>
           </div>
         ) : (
-          <div style={{ background: '#282828', border: '1px solid #3d3d3d', borderRadius: '8px', overflow: 'hidden' }}>
+          <div style={{ background: '#282828', border: '1px solid #3d3d3da8', borderRadius: '8px', overflow: 'hidden' }}>
             {notifications.map((notif, i) => {
               const { icon: Icon, color, bg } = getIcon(notif.type)
               return (
