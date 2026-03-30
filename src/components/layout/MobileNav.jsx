@@ -42,8 +42,12 @@ export default function MobileNav() {
             </div>
             {[
               { label: 'My Profile', action: () => { navigate(`/profile/${user?.username}`); setProfileOpen(false) } },
+              
+              { label: 'Saved Posts', action: () => { navigate('/bookmarks'); setProfileOpen(false) } },
+
               { label: 'Edit Profile', action: () => { navigate('/settings'); setProfileOpen(false) } },
               { label: 'Create Post', action: () => { navigate('/create-post'); setProfileOpen(false) } },
+
             ].map(item => (
               <div key={item.label} onClick={item.action} style={{ padding: '9px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', color: '#94a3b8' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#3d3d3d'; e.currentTarget.style.color = '#eff1f6' }}
