@@ -97,7 +97,7 @@ export default function BookmarkPage() {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '60px', color: '#6b7280', fontSize: '13px' }}>Loading...</div>
         ) : bookmarks.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', background: '#242424', borderRadius: '10px', border: '1px solid #333' }}>
+          <div style={{ textAlign: 'center', padding: '60px 20px', background: '#242424db', borderRadius: '10px', border: '1px solid #333' }}>
             <div style={{ width: '48px', height: '48px', background: 'rgba(255,161,22,0.1)', border: '1px solid rgba(255,161,22,0.2)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
               <Bookmark size={22} color="#ffa116" />
             </div>
