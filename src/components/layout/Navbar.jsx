@@ -57,12 +57,13 @@ export default function Navbar() {
 
   return (
     <>
-      <style>{`
+     <style>{`
         .desktop-nav { display: flex; }
         .desktop-only { display: flex; }
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
           .desktop-only { display: none !important; }
+          .dd-dropdown { right: -8px !important; min-width: 160px !important; }
         }
         .nav-link-item { padding: 5px 12px; border-radius: 6px; font-size: 13px; color: #94a3b8; background: transparent; transition: all 0.15s; cursor: pointer; text-decoration: none; display: block; }
         .nav-link-item:hover { color: #eff1f6 !important; background: #2d2d2d !important; }
@@ -152,7 +153,7 @@ export default function Navbar() {
 
               {/* Dropdown */}
               {dropdownOpen && (
-                <div style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, background: '#242424', border: '1px solid #333', borderRadius: '10px', padding: '6px', minWidth: '180px', zIndex: 200, boxShadow: '0 12px 32px rgba(0,0,0,0.6)' }}>
+                <div  className="dd-dropdown" style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, background: '#242424', border: '1px solid #333', borderRadius: '10px', padding: '6px', minWidth: '180px', zIndex: 200, boxShadow: '0 12px 32px rgba(0,0,0,0.6)' }}>
 
                   {/* User info header */}
                   <div style={{ padding: '10px 12px 8px', borderBottom: '1px solid #2d2d2d', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '10px' }}>

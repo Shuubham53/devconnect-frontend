@@ -49,10 +49,13 @@ export default function FeedPage() {
   catch (err) { toast.error('Failed to like') }
 }
 
-  const handleBookmark = async (postId) => {
-    try { await api.post(`/api/bookmarks/${postId}`); toast.success('Bookmarked!') }
-    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/bookmarks/${postId}`); toast.success('Removed') } }
-  }
+ const handleBookmark = async (postId) => {
+  try {
+    const res = await api.post(`/api/bookmarks/${postId}/toggle`)
+    const result = res.data.message
+    toast.success(result === 'saved' ? 'Bookmarked!' : 'Removed!')
+  } catch (err) { toast.error('Failed') }
+}
 
   const getTypeStyle = (type) => {
     switch (type) {

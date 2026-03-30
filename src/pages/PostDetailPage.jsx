@@ -36,10 +36,13 @@ export default function PostDetailPage() {
     catch (err) { toast.error('Failed to like') }
   }
 
-  const handleBookmark = async () => {
-    try { await api.post(`/api/bookmarks/${id}`); toast.success('Bookmarked!') }
-    catch (err) { if (err.response?.status === 400) { await api.delete(`/api/bookmarks/${id}`); toast.success('Removed') } }
-  }
+  const handleBookmark = async (postId) => {
+  try {
+    const res = await api.post(`/api/bookmarks/${postId}/toggle`)
+    const result = res.data.message
+    toast.success(result === 'saved' ? 'Bookmarked!' : 'Removed!')
+  } catch (err) { toast.error('Failed') }
+}
 
   const handleComment = async (e) => {
     e.preventDefault()
