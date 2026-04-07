@@ -1,16 +1,42 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+DevConnect Frontend
+A developer community platform built with React + Vite. LeetCode-inspired dark theme with real-time features.
+Tech Stack
+React 18 + Vite
+React Router v6 — client-side routing
+Axios — API calls with JWT interceptor
+Lucide React — icons
+React Hot Toast — notifications
+Deployed on Vercel
+Features
+Feed with Latest / Following / Trending tabs
+Post detail with nested comments and reply threads
+Real-time notification badge via WebSocket
+Leaderboard with hero spotlight design
+Profile page with score history
+Explore page with tag filtering
+Search for posts and developers
+Bookmarks / Saved Posts
+Responsive — mobile, tablet, desktop
+Pages
+Route
+Page
+/feed
+Main feed
+/post/:id
+Post detail + comments
+/profile/:username
+User profile
+/explore
+Trending + tag filter
+/leaderboard
+Top developers
+/search
+Search posts & users
+/bookmarks
+Saved posts
+/notifications
+Notification center
+/create-post
+Create new post
+/settings
+Edit profile
