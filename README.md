@@ -105,35 +105,8 @@ npm run dev
 
 ---
 
-## 📦 Build
-
-```bash
-npm run build
-```
-
----
-
-## 📌 Future Improvements
-
-* 🧠 AI-based post recommendations
-* 💬 Real-time chat system
-* 📊 Advanced analytics dashboard
-* 🧪 Unit & integration testing
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to fork the repo and submit a PR.
-
----
-
 ## 📜 License
 
 This project is licensed under the MIT License.
 
 ---
-
-## 💡 Author
-
-Built with ❤️ by **Shubham Nishad**
